@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { PhysicsService } from './physics.service';
 
 @Injectable({
   providedIn: 'root',
@@ -7,20 +8,12 @@ export class GameService {
   score = 0;
   playerY = 0; // Vertical position
   playerX = 50; // Horizontal position (percentage of screen width)
-  velocity = 0; // Vertical velocity
-  gravity = -2; // Gravity force
-  thrust = 10; // Rocket thrust force per input
-  maxUpwardVelocity = 400; // Adjust as needed
-  maxDownwardVelocity = -200; // Adjust as needed
   horizontalSpeed = 5; // Horizontal speed per input
-  isFlying = false;
-  isAscending = false; // Track direction
+
+  constructor(public physics: PhysicsService) {}
 
   applyThrust(): void {
-    this.velocity += this.thrust; // Apply a single burst of thrust
-    if (this.velocity > this.maxUpwardVelocity) {
-      this.velocity = this.maxUpwardVelocity; // Cap upward velocity
-    }
+    this.physics.applyThrust(); // Delegate thrust logic to PhysicsService
   }
 
   moveLeft(): void {
@@ -38,41 +31,23 @@ export class GameService {
   }
 
   updateGame(): void {
-    this.velocity += this.gravity; // Apply gravity continuously
-
-    // Cap the velocity within the defined limits
-    if (this.velocity > this.maxUpwardVelocity) {
-      this.velocity = this.maxUpwardVelocity;
-    }
-
-    if (this.velocity < this.maxDownwardVelocity) {
-      this.velocity = this.maxDownwardVelocity;
-    }
-
-    this.playerY += this.velocity; // Update the vertical position
+    this.physics.applyGravity(); // Apply gravity continuously
+    this.playerY += this.physics.getVelocity(); // Update vertical position
 
     // Prevent falling below ground
     if (this.playerY < 0) {
       this.playerY = 0;
-      this.velocity = 0; // Reset velocity on the ground
+      this.physics.reset(); // Reset velocity on the ground
     }
 
     // Update score directly based on height
     this.score = Math.max(0, Math.floor(this.playerY));
   }
 
-  startFlying(): void {
-    this.isFlying = true;
-  }
-
-  stopFlying(): void {
-    this.isFlying = false;
-  }
-
   resetGame(): void {
     this.score = 0;
     this.playerY = 0;
-    this.velocity = 0;
-    this.isFlying = false;
+    this.playerX = 50;
+    this.physics.reset();
   }
 }

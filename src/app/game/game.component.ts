@@ -31,23 +31,24 @@ export class GameComponent implements OnInit {
 
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
-    this.gameService.applyThrust();
+    this.gameService.applyThrust(); // Trigger thrust through GameService
   }
 
   @HostListener('mouseup', ['$event'])
   onMouseUp(event: MouseEvent): void {
-    this.gameService.stopFlying();
+    this.gameService.physics.reset(); // Stop thrust by resetting velocity
   }
 
   @HostListener('touchstart', ['$event'])
   onTouchStart(event: TouchEvent): void {
-    this.gameService.applyThrust();
+    this.gameService.applyThrust(); // Trigger thrust through GameService
   }
 
   @HostListener('touchend', ['$event'])
   onTouchEnd(event: TouchEvent): void {
-    this.gameService.stopFlying();
+    this.gameService.physics.reset(); // Stop thrust by resetting velocity
   }
+
   @HostListener('document:keydown', ['$event'])
   onKeyDown(event: KeyboardEvent): void {
     if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') {
@@ -94,12 +95,13 @@ export class GameComponent implements OnInit {
   }
 
   get rocketSpeed(): number {
-    return Math.abs(this.gameService.velocity); // Absolute value for speed
+    return Math.abs(this.gameService.physics.getVelocity()); // Absolute value for speed
   }
 
   get rocketSpeedKmh(): number {
     const PIXELS_PER_KILOMETER = 100000; // Adjust as needed
-    const velocityInPixelsPerSecond = this.gameService.velocity * 20; // 20 updates per second
+    const velocityInPixelsPerSecond =
+      this.gameService.physics.getVelocity() * 20; // 20 updates per second
     const speedInKmh =
       (velocityInPixelsPerSecond / PIXELS_PER_KILOMETER) * 3600;
     return Math.round(speedInKmh); // Allow negative values for falling
@@ -112,7 +114,7 @@ export class GameComponent implements OnInit {
   dots: { x: number; y: number }[] = []; // Track dot positions
 
   updateDots(): void {
-    const velocity = this.gameService.velocity;
+    const velocity = this.gameService.physics.getVelocity();
 
     this.dots = this.dots.map((dot) => ({
       ...dot,
