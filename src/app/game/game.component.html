@@ -1,0 +1,21 @@
+<div class="game-container" [ngStyle]="backgroundStyle">
+  <div
+    *ngFor="let dot of dots"
+    class="dot"
+    [style.left.px]="dot.x"
+    [style.top.px]="rocketVisualPosition - (playerY - dot.y)"
+  ></div>
+
+  <div class="ground" *ngIf="showGround"></div>
+  <div
+    class="player"
+    [style.left.%]="gameService.playerX"
+    [style.bottom.px]="rocketVisualPosition"
+  >
+    <img src="/rocket.png" alt="Rocket Character" />
+  </div>
+  <div class="score">Score: {{ score }}</div>
+  <div class="speed">Speed: {{ rocketSpeedKmh }} km/h</div>
+  <div class="touch-zone left" (touchstart)="gameService.moveLeft()"></div>
+  <div class="touch-zone right" (touchstart)="gameService.moveRight()"></div>
+</div>

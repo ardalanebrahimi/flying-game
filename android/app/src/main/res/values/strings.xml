@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">flying-game</string>
+    <string name="title_activity_main">flying-game</string>
+    <string name="package_name">com.ardiland.flyinggame</string>
+    <string name="custom_url_scheme">com.ardiland.flyinggame</string>
+</resources>
