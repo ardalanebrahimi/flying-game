@@ -26,7 +26,7 @@ export class GameComponent implements OnInit {
       if (this.gameService.playerY % 50 === 0) {
         this.spawnDot(); // Spawn dots every 50 height units
       }
-    }, 50); // Update every 50ms
+    }, 500); // Update every 50ms
   }
 
   @HostListener('mousedown', ['$event'])
@@ -36,7 +36,7 @@ export class GameComponent implements OnInit {
 
   @HostListener('mouseup', ['$event'])
   onMouseUp(event: MouseEvent): void {
-    this.gameService.physics.reset(); // Stop thrust by resetting velocity
+    this.gameService.physics.stopFlying(); // Stop thrust by resetting velocity
   }
 
   @HostListener('touchstart', ['$event'])
@@ -46,7 +46,7 @@ export class GameComponent implements OnInit {
 
   @HostListener('touchend', ['$event'])
   onTouchEnd(event: TouchEvent): void {
-    this.gameService.physics.reset(); // Stop thrust by resetting velocity
+    this.gameService.physics.stopFlying(); // Stop thrust by resetting velocity
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -71,8 +71,13 @@ export class GameComponent implements OnInit {
     return this.gameService.score;
   }
 
+  get currentStage(): string {
+    return this.gameService.currentStage.name;
+  }
+
   get backgroundStyle() {
     return {
+      'background-image': this.gameService.currentStage.background,
       'background-position-y': `${this.backgroundPositionY}px`,
     };
   }
@@ -133,10 +138,5 @@ export class GameComponent implements OnInit {
     const x = Math.random() * window.innerWidth; // Random X position
     const y = this.gameService.playerY; // Match rocket's height
     this.dots.push({ x, y });
-
-    // Remove the dot after it moves off-screen
-    // setTimeout(() => {
-    //   this.dots = this.dots.filter((dot) => dot.x != x || dot.y != y);
-    // }, 5000); // Adjust duration as needed
   }
 }
