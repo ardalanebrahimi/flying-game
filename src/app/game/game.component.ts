@@ -23,10 +23,10 @@ export class GameComponent implements OnInit {
       this.gameService.updateGame();
       this.updateBackground(); // Update the background position
       this.updateDots(); // Update dot positions
-      if (this.gameService.playerY % 50 === 0) {
+      if (Math.floor(this.gameService.playerY) % 50 === 0) {
         this.spawnDot(); // Spawn dots every 50 height units
       }
-    }, 500); // Update every 50ms
+    }, 50); // Update every 100ms (10 times per second)
   }
 
   @HostListener('mousedown', ['$event'])

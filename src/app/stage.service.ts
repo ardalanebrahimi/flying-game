@@ -18,7 +18,7 @@ export class StageService {
       maxSpeed: 5,
       deceleration: -1, // Simulate air resistance
       background: 'linear-gradient(to bottom, #87ceeb, #4682b4)',
-      heightRange: [0, 10],
+      heightRange: [0, 100],
     },
     {
       name: 'Sky',
@@ -26,7 +26,7 @@ export class StageService {
       maxSpeed: 15,
       deceleration: -0.5, // Lighter air resistance
       background: 'linear-gradient(to bottom, #4682b4, #000000)',
-      heightRange: [10, 100],
+      heightRange: [100, 1000],
     },
     {
       name: 'Outer Space',
@@ -34,7 +34,7 @@ export class StageService {
       deceleration: -0.2, // Deceleration in zero gravity
       maxSpeed: 100,
       background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
-      heightRange: [100, 1500000],
+      heightRange: [1000, 1500000],
     },
 
     {

@@ -34,9 +34,11 @@ export class GameService {
       this.playerX = 100; // Prevent moving out of bounds (right)
     }
   }
+
   updateGame(): void {
+    const HEIGHT_SCALE = 0.2; // Scale height progression (1% of velocity)
     this.physics.applyGravity(); // Apply physics calculations
-    this.playerY += this.physics.getVelocity(); // Update vertical position
+    this.playerY += this.physics.getVelocity() * HEIGHT_SCALE; // Update vertical position with scaling
 
     // Prevent falling below ground
     if (this.playerY < 0) {
