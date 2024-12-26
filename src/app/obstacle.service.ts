@@ -4,7 +4,23 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class ObstacleService {
-  obstacles: { x: number; y: number; type: string; image: string }[] = [];
+  obstacles: {
+    x: number;
+    y: number;
+    type: string;
+    image: string;
+    size: number;
+  }[] = [];
+  planets = [
+    '/obstacles/earth.png',
+    '/obstacles/moon.png',
+    '/obstacles/sun.png',
+    '/obstacles/mars.png',
+    '/obstacles/jupiter.png',
+    '/obstacles/neptune.png',
+    '/obstacles/uranus.png',
+    '/obstacles/grassplanet.png',
+  ];
 
   spawnObstacle(stage: string): void {
     const x = Math.random() * window.innerWidth; // Random X position
@@ -13,7 +29,7 @@ export class ObstacleService {
     let type = '';
     let image = ''; // Path to obstacle image
     switch (stage) {
-      case 'Earth’s Surface':
+      case 'Earth Surface':
         type = 'tree';
         image = '/obstacles/tree.png';
         break;
@@ -23,7 +39,7 @@ export class ObstacleService {
         break;
       case 'Outer Space':
         type = 'planet';
-        image = '/obstacles/mars.png';
+        image = this.planets[Math.floor(Math.random() * this.planets.length)]; // Random planet
         break;
       case 'Deep Space':
         type = 'star';
@@ -32,7 +48,8 @@ export class ObstacleService {
     }
 
     if (type && image) {
-      this.obstacles.push({ x, y, type, image });
+      const size = type === 'planet' ? Math.random() * 50 + 50 : 50; // Random size for planets
+      this.obstacles.push({ x, y, type, image, size });
     }
   }
 

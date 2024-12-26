@@ -10,6 +10,8 @@
     class="obstacle"
     [style.left.px]="obstacle.x"
     [style.top.px]="obstacle.y"
+    [style.width.px]="obstacle.size"
+    [style.height.px]="obstacle.size"
   >
     <img [src]="obstacle.image" [alt]="obstacle.type" />
   </div>
