@@ -133,9 +133,7 @@ export class GameComponent implements OnInit {
   startObstacleMovement(): void {
     setInterval(() => {
       if (this.gameService.physics.getVelocity() !== 0) {
-        this.gameService.obstacleService.moveObstacles(
-          this.gameService.currentStage.maxSpeed
-        );
+        this.gameService.obstacleService.moveObstacles();
       }
     }, 50); // Adjust movement speed (20 times per second)
   }
