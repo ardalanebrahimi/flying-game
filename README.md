@@ -1,4 +1,3 @@
-````markdown
 # Rocket Adventure Game
 
 A fun and engaging game where players control a rocket to navigate through different stages of the universe, avoiding obstacles and striving to reach deep space.
@@ -46,6 +45,7 @@ A fun and engaging game where players control a rocket to navigate through diffe
   ```bash
   npm install -g @capacitor/cli
   ```
+
 ````
 
 ### Installation
@@ -172,3 +172,4 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 Let me know if you’d like further adjustments or if other sections need enhancement! 🚀
 ```
+````
