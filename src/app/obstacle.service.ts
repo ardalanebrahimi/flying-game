@@ -29,7 +29,7 @@ export class ObstacleService {
     let type = '';
     let image = ''; // Path to obstacle image
     switch (stage) {
-      case 'Earth Surface':
+      case 'Earth’s Surface':
         type = 'tree';
         image = '/obstacles/tree.png';
         break;
@@ -39,7 +39,7 @@ export class ObstacleService {
         break;
       case 'Outer Space':
         type = 'planet';
-        image = this.planets[Math.floor(Math.random() * this.planets.length)]; // Random planet
+        image = this.planets[Math.floor(Math.random() * this.planets.length)];
         break;
       case 'Deep Space':
         type = 'star';

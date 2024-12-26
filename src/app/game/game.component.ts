@@ -15,8 +15,10 @@ export class GameComponent implements OnInit {
   constructor(public gameService: GameService) {}
 
   ngOnInit(): void {
-    this.startGameLoop(); // Start the main game loop
-    this.startDotSpawner(); // Start spawning dots at random intervals
+    this.startGameLoop(); // Main game loop
+    this.startDotSpawner(); // Spawn dots
+    this.startObstacleSpawner(); // Spawn obstacles
+    this.startObstacleMovement(); // Move obstacles
   }
 
   startGameLoop(): void {
@@ -104,11 +106,45 @@ export class GameComponent implements OnInit {
       (velocityInPixelsPerSecond / PIXELS_PER_KILOMETER) * 3600;
     return Math.round(speedInKmh); // Allow negative values for falling
   }
+  startObstacleSpawner(): void {
+    const spawnObstacleInterval = () => {
+      if (this.gameService.physics.getVelocity() !== 0) {
+        const currentStage = this.gameService.currentStage.name;
+
+        // Adjust spawn frequency based on stage
+        let delay = 1000; // Default 1-second delay
+        if (currentStage === 'Earth’s Surface') {
+          delay = Math.random() * 2000 + 500; // Less frequent
+        } else if (currentStage === 'Sky') {
+          delay = Math.random() * 1000 + 300; // Moderate frequency
+        } else if (currentStage === 'Outer Space') {
+          delay = Math.random() * 500 + 200; // High frequency
+        } else if (currentStage === 'Deep Space') {
+          delay = Math.random() * 400 + 100; // Very high frequency
+        }
+
+        this.gameService.obstacleService.spawnObstacle(currentStage); // Spawn based on stage
+      }
+      setTimeout(spawnObstacleInterval, 1000); // Debugging with fixed delay
+    };
+    spawnObstacleInterval();
+  }
+
+  startObstacleMovement(): void {
+    setInterval(() => {
+      if (this.gameService.physics.getVelocity() !== 0) {
+        this.gameService.obstacleService.moveObstacles(
+          this.gameService.currentStage.maxSpeed
+        );
+      }
+    }, 50); // Adjust movement speed (20 times per second)
+  }
 
   get showStars(): boolean {
     // Introduce a buffer to avoid toggling near the threshold
     return this.gameService.playerY > 350; // Adjust buffer as needed
   }
+
   dots: { x: number; y: number }[] = []; // Track dot positions
 
   startDotSpawner(): void {

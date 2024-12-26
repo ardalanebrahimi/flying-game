@@ -50,7 +50,7 @@ export class GameService {
     if (this.exploded) {
       return; // Do nothing if exploded
     }
-    const HEIGHT_SCALE = 0.2; // Scale height progression (1% of velocity)
+    const HEIGHT_SCALE = 0.2; // Scale height progression
     this.physics.applyGravity(); // Apply physics calculations
     this.playerY += this.physics.getVelocity() * HEIGHT_SCALE; // Update vertical position with scaling
 
@@ -69,17 +69,7 @@ export class GameService {
     // Update score based on height
     this.score = Math.max(0, Math.floor(this.playerY));
 
-    // Handle obstacles
-    if (
-      Math.floor(this.playerY) % 100 === 0 &&
-      this.physics.getVelocity() !== 0
-    ) {
-      this.obstacleService.spawnObstacle(this.currentStage.name); // Spawn based on stage
-    }
-    if (this.physics.getVelocity() !== 0) {
-      this.obstacleService.moveObstacles(this.currentStage.maxSpeed);
-    }
-
+    // Check for collisions
     if (this.checkCollisions()) {
       this.triggerExplosion(); // Trigger explosion on collision
     }
