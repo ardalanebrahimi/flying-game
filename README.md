@@ -1,59 +1,176 @@
-# FlyingGame
+Here's an updated `README.md` file with the **Capacitor Build for Android** section added:
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
+````markdown
+# Rocket Adventure Game
 
-## Development server
+A fun and engaging game where players control a rocket to navigate through different stages of the universe, avoiding obstacles and striving to reach deep space.
 
-To start a local development server, run:
+---
 
-```bash
-ng serve
+## Features
+
+- **Stages**:
+  - Earth Surface: Navigate through falling trees.
+  - Sky: Dodge volcanic eruptions.
+  - Outer Space: Avoid moving planets.
+  - Deep Space: Escape fast-moving stars.
+- **Realistic Physics**:
+  - Gravity and thrust mechanics.
+  - Deceleration in zero-gravity zones.
+- **Dynamic Gameplay**:
+  - Speed and difficulty adjust based on the stage.
+  - Randomly spawning obstacles.
+- **Explosions**:
+  - Collide with obstacles to trigger an explosion effect.
+  - Game pauses after collision; players can reset manually.
+
+---
+
+## Controls
+
+- **Desktop**:
+  - Use the mouse to click for thrust.
+  - Press `ArrowLeft` or `A` to move left.
+  - Press `ArrowRight` or `D` to move right.
+- **Mobile**:
+  - Tap the left or right edges of the screen to move horizontally.
+  - Tap anywhere to apply thrust.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js and npm installed on your machine.
+- Android Studio installed for building and running the Android app.
+- Capacitor CLI installed globally:
+  ```bash
+  npm install -g @capacitor/cli
+  ```
+````
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-repo/rocket-adventure-game.git
+   ```
+2. Navigate to the project directory:
+   ```bash
+   cd rocket-adventure-game
+   ```
+3. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+---
+
+## Running the Game
+
+### Development Server
+
+1. Start the development server:
+   ```bash
+   npm start
+   ```
+2. Open your browser and navigate to `http://localhost:4200`.
+
+---
+
+## Build for Android
+
+To build and deploy the app for Android devices:
+
+### Steps:
+
+1. **Build the production version of the app:**
+
+   ```bash
+   ng build --configuration production
+   ```
+
+   This generates the production-ready web app in the `dist/` folder.
+
+2. **Copy the build to Capacitor:**
+
+   ```bash
+   npx cap copy
+   ```
+
+3. **Open the Android project in Android Studio:**
+
+   ```bash
+   npx cap open android
+   ```
+
+4. **Build and Run the App**:
+   - In Android Studio, click `Run` to install and run the app on an emulator or connected device.
+
+---
+
+## Documentation
+
+### Capacitor Documentation
+
+- [Capacitor Docs](https://capacitorjs.com/docs)
+- [Android Configuration](https://capacitorjs.com/docs/android/configuration)
+
+### Angular Documentation
+
+- [Angular Docs](https://angular.io/docs)
+
+---
+
+## Development
+
+### Code Structure
+
+- **Components**:
+  - `GameComponent`: Main gameplay logic and rendering.
+- **Services**:
+  - `GameService`: Manages game state and player logic.
+  - `PhysicsService`: Handles physics calculations like gravity and thrust.
+  - `ObstacleService`: Spawns and manages obstacles.
+
+### Key Methods
+
+- `applyGravity`: Applies gravity and deceleration to the rocket.
+- `spawnObstacle`: Spawns obstacles based on the current stage.
+- `checkCollisions`: Detects collisions between the rocket and obstacles.
+
+### Customization
+
+- **Adjust Stages**: Modify stage properties (e.g., gravity, max speed) in `StageService`.
+- **Add Obstacles**: Extend `ObstacleService` to include new obstacle types.
+
+---
+
+## Known Issues
+
+- **Collision Detection**: Improvements may be needed for edge cases.
+- **Performance**: Optimizations for a large number of dots and obstacles are ongoing.
+
+---
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+## Acknowledgments
+
+- Inspired by space exploration and the challenges of rocket physics.
+- Special thanks to contributors and testers for their feedback.
+
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### **Highlights Added:**
+1. Steps to **build for Android** with Capacitor.
+2. Links to relevant Capacitor documentation.
+3. Clear separation of production build and deployment instructions.
 
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
+Let me know if you’d like further adjustments or if other sections need enhancement! 🚀
 ```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
