@@ -1,5 +1,3 @@
-Here's an updated `README.md` file with the **Capacitor Build for Android** section added:
-
 ````markdown
 # Rocket Adventure Game
 
