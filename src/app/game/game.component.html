@@ -10,8 +10,10 @@
     class="obstacle"
     [style.left.px]="obstacle.x"
     [style.top.px]="obstacle.y"
-    [ngClass]="obstacle.type"
-  ></div>
+  >
+    <img [src]="obstacle.image" [alt]="obstacle.type" />
+  </div>
+
   <div
     *ngIf="gameService.exploded"
     class="explosion"

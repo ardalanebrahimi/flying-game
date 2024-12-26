@@ -101,24 +101,15 @@ img {
   position: absolute;
   width: 50px;
   height: 50px;
+  overflow: hidden;
 }
 
-.obstacle.tree {
-  background: green;
+.obstacle img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensures the image fits well */
 }
 
-.obstacle.volcano {
-  background: red;
-}
-
-.obstacle.planet {
-  background: blue;
-}
-
-.obstacle.star {
-  background: yellow;
-  border-radius: 50%; /* Make stars circular */
-}
 .explosion {
   position: absolute;
   width: 100px;
