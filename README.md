@@ -46,8 +46,6 @@ A fun and engaging game where players control a rocket to navigate through diffe
   npm install -g @capacitor/cli
   ```
 
-````
-
 ### Installation
 
 1. Clone the repository:
@@ -163,13 +161,8 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 - Inspired by space exploration and the challenges of rocket physics.
 - Special thanks to contributors and testers for their feedback.
 
-```
-
 ### **Highlights Added:**
+
 1. Steps to **build for Android** with Capacitor.
 2. Links to relevant Capacitor documentation.
 3. Clear separation of production build and deployment instructions.
-
-Let me know if you’d like further adjustments or if other sections need enhancement! 🚀
-```
-````
