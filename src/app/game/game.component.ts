@@ -88,11 +88,6 @@ export class GameComponent implements OnInit {
     );
   }
 
-  get rocketVisualPosition(): number {
-    const screenHeight = window.innerHeight;
-    return Math.min(this.gameService.playerY, screenHeight * 0.25); // One-fourth from the bottom
-  }
-
   get showGround(): boolean {
     return this.gameService.playerY < 200; // Ground is visible at surface level
   }

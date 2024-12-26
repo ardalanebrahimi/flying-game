@@ -96,3 +96,62 @@ img {
   font-size: 20px;
   font-weight: bold;
 }
+
+.obstacle {
+  position: absolute;
+  width: 50px;
+  height: 50px;
+}
+
+.obstacle.tree {
+  background: green;
+}
+
+.obstacle.volcano {
+  background: red;
+}
+
+.obstacle.planet {
+  background: blue;
+}
+
+.obstacle.star {
+  background: yellow;
+  border-radius: 50%; /* Make stars circular */
+}
+.explosion {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, red, orange, yellow, transparent);
+  border-radius: 50%;
+  left: 50%;
+  //bottom: {{ rocketVisualPosition }}px;
+  transform: translate(-50%, 0);
+  animation: explode 1s ease-out;
+}
+
+@keyframes explode {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(3);
+    opacity: 0;
+  }
+}
+button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 10px 20px;
+  font-size: 20px;
+  color: white;
+  background-color: red;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 10;
+}

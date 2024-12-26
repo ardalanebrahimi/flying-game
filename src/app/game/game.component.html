@@ -5,12 +5,23 @@
     [style.left.px]="dot.x"
     [style.top.px]="dot.y"
   ></div>
+  <div
+    *ngFor="let obstacle of gameService.obstacleService.obstacles"
+    class="obstacle"
+    [style.left.px]="obstacle.x"
+    [style.top.px]="obstacle.y"
+    [ngClass]="obstacle.type"
+  ></div>
+  <div *ngIf="gameService.exploded" class="explosion"></div>
+  <button *ngIf="gameService.exploded" (click)="gameService.resetGame()">
+    Reset
+  </button>
 
   <div class="ground" *ngIf="showGround"></div>
   <div
     class="player"
     [style.left.%]="gameService.playerX"
-    [style.bottom.px]="rocketVisualPosition"
+    [style.bottom.px]="gameService.rocketVisualPosition"
   >
     <img src="/rocket.png" alt="Rocket Character" />
   </div>
