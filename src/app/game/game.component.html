@@ -12,7 +12,12 @@
     [style.top.px]="obstacle.y"
     [ngClass]="obstacle.type"
   ></div>
-  <div *ngIf="gameService.exploded" class="explosion"></div>
+  <div
+    *ngIf="gameService.exploded"
+    class="explosion"
+    [style.left.px]="gameService.explosionX"
+    [style.top.px]="gameService.explosionY"
+  ></div>
   <button *ngIf="gameService.exploded" (click)="gameService.resetGame()">
     Reset
   </button>

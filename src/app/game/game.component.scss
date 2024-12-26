@@ -125,9 +125,7 @@ img {
   height: 100px;
   background: radial-gradient(circle, red, orange, yellow, transparent);
   border-radius: 50%;
-  left: 50%;
-  //bottom: {{ rocketVisualPosition }}px;
-  transform: translate(-50%, 0);
+  transform: translate(-50%, -50%); /* Center explosion */
   animation: explode 1s ease-out;
 }
 
@@ -141,6 +139,7 @@ img {
     opacity: 0;
   }
 }
+
 button {
   position: absolute;
   top: 50%;

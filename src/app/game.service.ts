@@ -12,6 +12,8 @@ export class GameService {
   playerX = 50; // Horizontal position (percentage of screen width)
 
   currentStage: any;
+  explosionX?: number;
+  explosionY?: number;
 
   constructor(
     public physics: PhysicsService,
@@ -20,10 +22,14 @@ export class GameService {
   ) {}
 
   applyThrust(): void {
+    if (this.exploded) return; // Prevent movement if exploded
     this.physics.applyThrust(); // Delegate thrust logic to PhysicsService
   }
 
   moveLeft(): void {
+    if (this.exploded) {
+      return; // Do nothing if exploded
+    }
     this.playerX -= 5;
     if (this.playerX < 0) {
       this.playerX = 0; // Prevent moving out of bounds (left)
@@ -31,6 +37,9 @@ export class GameService {
   }
 
   moveRight(): void {
+    if (this.exploded) {
+      return; // Do nothing if exploded
+    }
     this.playerX += 5;
     if (this.playerX > 100) {
       this.playerX = 100; // Prevent moving out of bounds (right)
@@ -84,7 +93,9 @@ export class GameService {
 
   triggerExplosion(): void {
     this.exploded = true;
-    this.physics.reset(); // Stop all motion
+    this.physics.reset(); // Stop motion
+    this.explosionX = this.playerX * (window.innerWidth / 100); // Rocket's X position on screen
+    this.explosionY = window.innerHeight - this.rocketVisualPosition; // Rocket's Y position on screen
   }
 
   resetGame(): void {
