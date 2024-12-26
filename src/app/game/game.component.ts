@@ -15,7 +15,8 @@ export class GameComponent implements OnInit {
   constructor(public gameService: GameService) {}
 
   ngOnInit(): void {
-    this.startGameLoop();
+    this.startGameLoop(); // Start the main game loop
+    this.startDotSpawner(); // Start spawning dots at random intervals
   }
 
   startGameLoop(): void {
@@ -23,10 +24,7 @@ export class GameComponent implements OnInit {
       this.gameService.updateGame();
       this.updateBackground(); // Update the background position
       this.updateDots(); // Update dot positions
-      if (Math.floor(this.gameService.playerY) % 50 === 0) {
-        this.spawnDot(); // Spawn dots every 50 height units
-      }
-    }, 50); // Update every 100ms (10 times per second)
+    }, 50); // Update every 50ms (20 times per second)
   }
 
   @HostListener('mousedown', ['$event'])
@@ -118,25 +116,39 @@ export class GameComponent implements OnInit {
   }
   dots: { x: number; y: number }[] = []; // Track dot positions
 
+  startDotSpawner(): void {
+    const spawnDotInterval = () => {
+      if (this.gameService.physics.getVelocity() !== 0) {
+        this.spawnDot(); // Spawn dots only if thrust is active
+      }
+      const randomDelay = Math.random() * 300 + 100; // More frequent spawning
+      setTimeout(spawnDotInterval, randomDelay);
+    };
+    spawnDotInterval();
+  }
+
   updateDots(): void {
     const velocity = this.gameService.physics.getVelocity();
 
     this.dots = this.dots.map((dot) => ({
       ...dot,
-      y: dot.y - velocity, // Move dots relative to rocket velocity
+      y: dot.y + velocity, // Move dots downward
     }));
 
-    // Remove dots that are too far from the rocket
-    this.dots = this.dots.filter(
-      (dot) =>
-        dot.y > this.gameService.playerY - 1000 &&
-        dot.y < this.gameService.playerY + 1000
-    );
+    // Remove dots that move off the screen (below the viewport)
+    this.dots = this.dots.filter((dot) => dot.y < window.innerHeight + 100);
   }
 
   spawnDot(): void {
-    const x = Math.random() * window.innerWidth; // Random X position
-    const y = this.gameService.playerY; // Match rocket's height
-    this.dots.push({ x, y });
+    if (
+      this.gameService.playerY > 100 &&
+      this.gameService.physics.getVelocity() !== 0
+    ) {
+      // Spawn dots only after height 100
+      const x = Math.random() * window.innerWidth;
+      const y =
+        this.gameService.physics.getVelocity() > 0 ? 0 : window.innerHeight;
+      this.dots.push({ x, y });
+    }
   }
 }

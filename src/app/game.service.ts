@@ -14,7 +14,7 @@ export class GameService {
 
   constructor(
     public physics: PhysicsService,
-    private stageService: StageService
+    public stageService: StageService
   ) {}
 
   applyThrust(): void {

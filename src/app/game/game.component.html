@@ -3,7 +3,7 @@
     *ngFor="let dot of dots"
     class="dot"
     [style.left.px]="dot.x"
-    [style.top.px]="rocketVisualPosition - (playerY - dot.y)"
+    [style.top.px]="dot.y"
   ></div>
 
   <div class="ground" *ngIf="showGround"></div>
