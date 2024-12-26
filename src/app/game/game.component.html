@@ -15,17 +15,19 @@
   >
     <img [src]="obstacle.image" [alt]="obstacle.type" />
   </div>
-
   <div
     *ngIf="gameService.exploded"
     class="explosion"
     [style.left.px]="gameService.explosionX"
     [style.top.px]="gameService.explosionY"
   ></div>
-  <button *ngIf="gameService.exploded" (click)="gameService.resetGame()">
+  <button
+    class="reset-button"
+    *ngIf="gameService.exploded"
+    (click)="gameService.resetGame()"
+  >
     Reset
   </button>
-
   <div class="ground" *ngIf="showGround"></div>
   <div
     class="player"
@@ -37,6 +39,11 @@
   <div class="score">Score: {{ score }}</div>
   <div class="speed">Speed: {{ rocketSpeedKmh }} km/h</div>
   <div class="stage">Stage: {{ currentStage }}</div>
-  <div class="touch-zone left" (touchstart)="gameService.moveLeft()"></div>
-  <div class="touch-zone right" (touchstart)="gameService.moveRight()"></div>
+  <!-- Add a fullscreen touch listener -->
+  <div
+    class="touch-zone"
+    (touchstart)="onTouchStart($event)"
+    (touchmove)="onTouchMove($event)"
+    (touchend)="onTouchEnd($event)"
+  ></div>
 </div>

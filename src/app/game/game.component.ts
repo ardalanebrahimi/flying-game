@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 export class GameComponent implements OnInit {
   gameInterval: any;
   backgroundPositionY = 0; // Track background scroll position
+  private initialTouchX: number | null = null;
 
   constructor(public gameService: GameService) {}
 
@@ -19,6 +20,23 @@ export class GameComponent implements OnInit {
     this.startDotSpawner(); // Spawn dots
     this.startObstacleSpawner(); // Spawn obstacles
     this.startObstacleMovement(); // Move obstacles
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (this.initialTouchX !== null) {
+      const currentTouchX = event.touches[0].clientX;
+      const deltaX = currentTouchX - this.initialTouchX;
+
+      if (deltaX > 10) {
+        // Move right if swipe is significant
+        this.gameService.moveRight();
+        this.initialTouchX = currentTouchX; // Update reference point
+      } else if (deltaX < -10) {
+        // Move left if swipe is significant
+        this.gameService.moveLeft();
+        this.initialTouchX = currentTouchX; // Update reference point
+      }
+    }
   }
 
   startGameLoop(): void {
@@ -42,11 +60,13 @@ export class GameComponent implements OnInit {
   @HostListener('touchstart', ['$event'])
   onTouchStart(event: TouchEvent): void {
     this.gameService.applyThrust(); // Trigger thrust through GameService
+    this.initialTouchX = event.touches[0].clientX;
   }
 
   @HostListener('touchend', ['$event'])
   onTouchEnd(event: TouchEvent): void {
     this.gameService.physics.stopFlying(); // Stop thrust by resetting velocity
+    this.initialTouchX = null; // Reset the reference point
   }
 
   @HostListener('document:keydown', ['$event'])

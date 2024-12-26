@@ -28,9 +28,9 @@ export class GameService {
 
   moveLeft(): void {
     if (this.exploded) {
-      return; // Do nothing if exploded
+      return;
     }
-    this.playerX -= 5;
+    this.playerX -= 2;
     if (this.playerX < 0) {
       this.playerX = 0; // Prevent moving out of bounds (left)
     }
@@ -38,9 +38,9 @@ export class GameService {
 
   moveRight(): void {
     if (this.exploded) {
-      return; // Do nothing if exploded
+      return;
     }
-    this.playerX += 5;
+    this.playerX += 2;
     if (this.playerX > 100) {
       this.playerX = 100; // Prevent moving out of bounds (right)
     }
