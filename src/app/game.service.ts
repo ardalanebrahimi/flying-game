@@ -99,13 +99,13 @@ export class GameService {
 
   checkCollisions(): boolean {
     const rocketX = this.playerX * (window.innerWidth / 100); // Rocket's X position
-    const rocketY = window.innerHeight - this.rocketVisualPosition; // Rocket's Y on screen
+    const rocketY = window.innerHeight - this.rocketVisualPosition - 25; // Rocket's Center's Y on screen
 
     return this.obstacleService.obstacles.some((obstacle) => {
       const distance = Math.sqrt(
         Math.pow(rocketX - obstacle.x, 2) + Math.pow(rocketY - obstacle.y, 2)
       );
-      return distance < 30; // Adjust collision radius as needed
+      return distance < 40; // Adjust collision radius as needed
     });
   }
 }
