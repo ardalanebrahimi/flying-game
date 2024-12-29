@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Obstacle } from '../../../../core/models/obstacle.model';
+import { OBSTACLE_CONFIG } from '../../../../core/config/obstacle-config';
 
 @Injectable({
   providedIn: 'root',
@@ -8,17 +9,6 @@ export class ObstacleService {
   obstacles: Obstacle[] = [];
   private obstacleMovementInterval: any;
   private obstacleSpawnerTimeout: any;
-
-  private planets = [
-    '/obstacles/earth.png',
-    '/obstacles/moon.png',
-    '/obstacles/sun.png',
-    '/obstacles/mars.png',
-    '/obstacles/jupiter.png',
-    '/obstacles/neptune.png',
-    '/obstacles/uranus.png',
-    '/obstacles/grassplanet.png',
-  ];
 
   startObstacleLifecycle(
     stageCallback: () => string,
@@ -45,24 +35,10 @@ export class ObstacleService {
       let delay = 1000; // Default 1-second delay
       if (velocityCallback() !== 0) {
         const currentStage = stageCallback();
+        const config = OBSTACLE_CONFIG[currentStage];
+        if (!config) return;
 
-        // Adjust spawn frequency based on stage
-        let delay = 1000; // Default 1-second delay
-        switch (currentStage) {
-          case 'Earth’s Surface':
-            delay = Math.random() * 2000 + 500; // Less frequent
-            break;
-          case 'Sky':
-            delay = Math.random() * 1000 + 300; // Moderate frequency
-            break;
-          case 'Outer Space':
-            delay = Math.random() * 500 + 200; // High frequency
-            break;
-          case 'Deep Space':
-            delay = Math.random() * 400 + 100; // Very high frequency
-            break;
-        }
-
+        const delay = this.getRandomNumber(config.spawnRateRange);
         this.spawnObstacle(currentStage);
       }
       this.obstacleSpawnerTimeout = setTimeout(spawnObstacleInterval, delay);
@@ -78,61 +54,35 @@ export class ObstacleService {
       }
     }, 50); // Adjust movement speed
   }
-
   private spawnObstacle(stage: string): void {
-    const x = Math.random() * window.innerWidth; // Random X position
-    const y = 0; // Start at the top edge
+    const config = OBSTACLE_CONFIG[stage];
+    if (!config) return;
 
-    let obstacle: Obstacle | null = null;
+    const typeConfig = this.getRandomElement(config.types);
+    const image = this.getRandomElement(typeConfig.imagePool || []);
+    const size =
+      typeConfig.size || this.getRandomNumber(typeConfig.sizeRange || [50, 50]);
+    const speed = this.getRandomNumber(typeConfig.speedRange);
 
-    switch (stage) {
-      case 'Earth’s Surface':
-        obstacle = this.createObstacle(
-          x,
-          y,
-          'tree',
-          '/obstacles/tree.png',
-          50,
-          Math.random() * 2 + 1
-        );
-        break;
-      case 'Sky':
-        obstacle = this.createObstacle(
-          x,
-          y,
-          'ice',
-          '/obstacles/ice.png',
-          50,
-          Math.random() * 3 + 2
-        );
-        break;
-      case 'Outer Space':
-        const planetImage =
-          this.planets[Math.floor(Math.random() * this.planets.length)];
-        obstacle = this.createObstacle(
-          x,
-          y,
-          'planet',
-          planetImage,
-          Math.random() * 50 + 50,
-          Math.random() * 5 + 3
-        );
-        break;
-      case 'Deep Space':
-        obstacle = this.createObstacle(
-          x,
-          y,
-          'star',
-          '/obstacles/star.png',
-          50,
-          Math.random() * 8 + 5
-        );
-        break;
-    }
+    const obstacle: Obstacle = {
+      x: Math.random() * window.innerWidth,
+      y: 0,
+      type: typeConfig.type,
+      image,
+      size,
+      speed,
+    };
 
-    if (obstacle) {
-      this.obstacles.push(obstacle);
-    }
+    this.obstacles.push(obstacle);
+  }
+
+  private getRandomElement<T>(array: T[]): T {
+    return array[Math.floor(Math.random() * array.length)];
+  }
+
+  private getRandomNumber(range: [number, number]): number {
+    const [min, max] = range;
+    return Math.random() * (max - min) + min;
   }
 
   moveObstacles(): void {
