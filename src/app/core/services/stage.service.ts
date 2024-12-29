@@ -28,7 +28,7 @@ export class StageService {
       deceleration: -0.2, // Deceleration in zero gravity
       maxSpeed: 100,
       background: 'linear-gradient(to bottom, #000000, #1a1a1a)',
-      heightRange: [1000, 40000],
+      heightRange: [1000, 8000],
     },
     {
       name: 'Deep Space',
@@ -36,7 +36,7 @@ export class StageService {
       maxSpeed: 150,
       deceleration: -0.1, // Minimal deceleration in deep space
       background: 'linear-gradient(to bottom, #1a1a1a, #3a3a3a)',
-      heightRange: [40000, Infinity],
+      heightRange: [8000, Infinity],
     },
   ];
 
