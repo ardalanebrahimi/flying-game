@@ -1,5 +1,5 @@
 <div
-  *ngFor="let dot of gameService.dots"
+  *ngFor="let dot of gameService.dotService.dots"
   class="dot"
   [style.left.px]="dot.x"
   [style.top.px]="dot.y"

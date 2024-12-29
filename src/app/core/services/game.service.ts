@@ -4,11 +4,13 @@ import { StageService } from './stage.service';
 import { ObstacleService } from './obstacle.service';
 import { GameState } from '../models/game.model';
 import { Stage } from '../models/stage.model';
+import { DotService } from './dot.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
+  private gameInterval: any;
   state: GameState = {
     score: 0,
     playerY: 0, // Vertical position
@@ -20,13 +22,29 @@ export class GameService {
   explosionX?: number;
   explosionY?: number;
   dots: { x: number; y: number }[] = [];
+  backgroundPositionY = 0; // Track background scroll position
 
   constructor(
     public physics: PhysicsService,
     public stageService: StageService,
-    public obstacleService: ObstacleService
+    public obstacleService: ObstacleService,
+    public dotService: DotService
   ) {}
 
+  startGameLoop(): void {
+    this.stopGameLoop(); // Ensure no duplicate intervals
+    this.gameInterval = setInterval(() => {
+      this.updateGame(); // Update player-related logic
+      this.dotService.updateDots(); // Update dots
+    }, 50); // Fixed interval (adjustable as needed)
+  }
+
+  stopGameLoop(): void {
+    if (this.gameInterval) {
+      clearInterval(this.gameInterval);
+      this.gameInterval = null;
+    }
+  }
   applyThrust(): void {
     if (this.state.exploded) return; // Prevent movement if exploded
     this.physics.applyThrust(); // Delegate thrust logic to PhysicsService
@@ -69,8 +87,23 @@ export class GameService {
     // Update score based on height
     this.state.score = Math.max(0, Math.floor(this.state.playerY));
 
+    // Update background position
+    this.updateBackground();
+
     // Check for collisions
     if (this.checkCollisions()) this.triggerExplosion();
+  }
+
+  private updateBackground(): void {
+    const maxScroll = -window.innerHeight * 2; // Prevent scrolling past the gradient's end
+    this.backgroundPositionY = Math.max(-this.state.playerY / 2, maxScroll);
+  }
+
+  get backgroundStyle() {
+    return {
+      'background-image': this.stageService.getCurrentStage().background,
+      'background-position-y': `${this.backgroundPositionY}px`,
+    };
   }
 
   get rocketVisualPosition(): number {
@@ -107,37 +140,5 @@ export class GameService {
       );
       return distance < 40; // Adjust collision radius as needed
     });
-  }
-
-  startDotSpawner(): void {
-    const spawnDotInterval = () => {
-      if (this.physics.getVelocity() !== 0) {
-        this.spawnDot(); // Spawn dots only if thrust is active
-      }
-      const randomDelay = Math.random() * 300 + 100; // More frequent spawning
-      setTimeout(spawnDotInterval, randomDelay);
-    };
-    spawnDotInterval();
-  }
-
-  updateDots(): void {
-    const velocity = this.physics.getVelocity();
-
-    this.dots = this.dots.map((dot) => ({
-      ...dot,
-      y: dot.y + velocity, // Move dots downward
-    }));
-
-    // Remove dots that move off the screen (below the viewport)
-    this.dots = this.dots.filter((dot) => dot.y < window.innerHeight + 100);
-  }
-
-  spawnDot(): void {
-    if (this.state.playerY > 100 && this.physics.getVelocity() !== 0) {
-      // Spawn dots only after height 100
-      const x = Math.random() * window.innerWidth;
-      const y = this.physics.getVelocity() > 0 ? 0 : window.innerHeight;
-      this.dots.push({ x, y });
-    }
   }
 }

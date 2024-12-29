@@ -12,6 +12,14 @@ export class DotComponent implements OnInit {
   constructor(public gameService: GameService) {}
 
   ngOnInit(): void {
-    this.gameService.startDotSpawner(); // Spawn dots
+    // Register callback to fetch current velocity
+    this.gameService.dotService.registerVelocityCallback(() =>
+      this.gameService.physics.getVelocity()
+    );
+    this.gameService.dotService.registerPlayerYCallback(
+      () => this.gameService.state.playerY
+    );
+
+    this.gameService.dotService.startDotSpawner(); // Spawn dots
   }
 }

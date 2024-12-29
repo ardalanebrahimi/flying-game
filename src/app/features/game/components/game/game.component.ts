@@ -23,16 +23,18 @@ import { ExplosionComponent } from '../explosion/explosion.component';
   ],
 })
 export class GameComponent implements OnInit {
-  gameInterval: any;
-  backgroundPositionY = 0; // Track background scroll position
   private initialTouchX: number | null = null;
 
   constructor(public gameService: GameService) {}
 
   ngOnInit(): void {
-    this.startGameLoop(); // Main game loop
+    this.gameService.startGameLoop(); // Main game loop
     this.startObstacleSpawner(); // Spawn obstacles
     this.startObstacleMovement(); // Move obstacles
+  }
+
+  ngOnDestroy(): void {
+    this.gameService.stopGameLoop(); // Stop the update loop on destroy
   }
 
   onTouchMove(event: TouchEvent): void {
@@ -50,14 +52,6 @@ export class GameComponent implements OnInit {
         this.initialTouchX = currentTouchX; // Update reference point
       }
     }
-  }
-
-  startGameLoop(): void {
-    this.gameInterval = setInterval(() => {
-      this.gameService.updateGame();
-      this.updateBackground(); // Update the background position
-      this.gameService.updateDots(); // Update dot positions
-    }, 50); // Update every 50ms (20 times per second)
   }
 
   @HostListener('mousedown', ['$event'])
@@ -92,10 +86,6 @@ export class GameComponent implements OnInit {
     }
   }
 
-  ngOnDestroy(): void {
-    clearInterval(this.gameInterval);
-  }
-
   get playerY() {
     return this.gameService.state.playerY;
   }
@@ -108,21 +98,6 @@ export class GameComponent implements OnInit {
     return this.gameService.state.currentStage;
   }
 
-  get backgroundStyle() {
-    return {
-      'background-image':
-        this.gameService.stageService.getCurrentStage().background,
-      'background-position-y': `${this.backgroundPositionY}px`,
-    };
-  }
-
-  updateBackground(): void {
-    const maxScroll = -window.innerHeight * 2; // Prevent scrolling past the gradient's end
-    this.backgroundPositionY = Math.max(
-      -this.gameService.state.playerY / 2,
-      maxScroll
-    );
-  }
   get showGround(): boolean {
     return this.gameService.state.playerY < 200; // Ground is visible at surface level
   }
