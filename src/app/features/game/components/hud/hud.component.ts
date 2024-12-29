@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
+import { GameService } from '../../../../core/services/game.service';
 
 @Component({
   selector: 'app-hud',
@@ -8,7 +9,14 @@ import { Component, Input } from '@angular/core';
   imports: [CommonModule],
 })
 export class HudComponent {
-  @Input() score: number = 0;
-  @Input() rocketSpeedKmh: number = 0;
-  @Input() currentStage: string = '';
+  constructor(public gameService: GameService) {}
+
+  get rocketSpeedKmh(): number {
+    const PIXELS_PER_KILOMETER = 100000;
+    const velocityInPixelsPerSecond =
+      this.gameService.physics.getVelocity() * 20;
+    return Math.round(
+      (velocityInPixelsPerSecond / PIXELS_PER_KILOMETER) * 3600
+    );
+  }
 }

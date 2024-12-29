@@ -1,28 +1,12 @@
 <div class="game-container" [ngStyle]="backgroundStyle">
-  <app-dot [dots]="dots"></app-dot>
-  <app-obstacle
-    [obstacles]="gameService.obstacleService.obstacles"
-  ></app-obstacle>
-  <app-explosion
-    *ngIf="gameService.state.exploded"
-    [explosionX]="gameService.explosionX"
-    [explosionY]="gameService.explosionY"
-  ></app-explosion>
-  <app-reset-button
-    *ngIf="gameService.state.exploded"
-    (reset)="gameService.resetGame()"
-  ></app-reset-button>
+  <app-dot></app-dot>
+  <app-obstacle></app-obstacle>
+  <app-explosion></app-explosion>
+  <app-reset-button></app-reset-button>
   <div class="ground" *ngIf="showGround"></div>
 
-  <app-player
-    [playerX]="gameService.state.playerX"
-    [rocketVisualPosition]="gameService.rocketVisualPosition"
-  ></app-player>
-  <app-hud
-    [score]="gameService.state.score"
-    [rocketSpeedKmh]="rocketSpeedKmh"
-    [currentStage]="gameService.state.currentStage"
-  ></app-hud>
+  <app-player></app-player>
+  <app-hud></app-hud>
   <div
     class="touch-zone"
     (touchstart)="onTouchStart($event)"

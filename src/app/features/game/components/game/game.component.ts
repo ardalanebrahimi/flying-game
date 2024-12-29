@@ -31,7 +31,6 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     this.startGameLoop(); // Main game loop
-    this.startDotSpawner(); // Spawn dots
     this.startObstacleSpawner(); // Spawn obstacles
     this.startObstacleMovement(); // Move obstacles
   }
@@ -57,7 +56,7 @@ export class GameComponent implements OnInit {
     this.gameInterval = setInterval(() => {
       this.gameService.updateGame();
       this.updateBackground(); // Update the background position
-      this.updateDots(); // Update dot positions
+      this.gameService.updateDots(); // Update dot positions
     }, 50); // Update every 50ms (20 times per second)
   }
 
@@ -132,15 +131,6 @@ export class GameComponent implements OnInit {
     return Math.abs(this.gameService.physics.getVelocity()); // Absolute value for speed
   }
 
-  get rocketSpeedKmh(): number {
-    const PIXELS_PER_KILOMETER = 100000; // Adjust as needed
-    const velocityInPixelsPerSecond =
-      this.gameService.physics.getVelocity() * 20; // 20 updates per second
-    const speedInKmh =
-      (velocityInPixelsPerSecond / PIXELS_PER_KILOMETER) * 3600;
-    return Math.round(speedInKmh); // Allow negative values for falling
-  }
-
   startObstacleSpawner(): void {
     const spawnObstacleInterval = () => {
       if (this.gameService.physics.getVelocity() !== 0) {
@@ -176,43 +166,5 @@ export class GameComponent implements OnInit {
         this.gameService.obstacleService.moveObstacles();
       }
     }, 50); // Adjust movement speed
-  }
-
-  dots: { x: number; y: number }[] = []; // Track dot positions
-
-  startDotSpawner(): void {
-    const spawnDotInterval = () => {
-      if (this.gameService.physics.getVelocity() !== 0) {
-        this.spawnDot(); // Spawn dots only if thrust is active
-      }
-      const randomDelay = Math.random() * 300 + 100; // More frequent spawning
-      setTimeout(spawnDotInterval, randomDelay);
-    };
-    spawnDotInterval();
-  }
-
-  updateDots(): void {
-    const velocity = this.gameService.physics.getVelocity();
-
-    this.dots = this.dots.map((dot) => ({
-      ...dot,
-      y: dot.y + velocity, // Move dots downward
-    }));
-
-    // Remove dots that move off the screen (below the viewport)
-    this.dots = this.dots.filter((dot) => dot.y < window.innerHeight + 100);
-  }
-
-  spawnDot(): void {
-    if (
-      this.gameService.state.playerY > 100 &&
-      this.gameService.physics.getVelocity() !== 0
-    ) {
-      // Spawn dots only after height 100
-      const x = Math.random() * window.innerWidth;
-      const y =
-        this.gameService.physics.getVelocity() > 0 ? 0 : window.innerHeight;
-      this.dots.push({ x, y });
-    }
   }
 }

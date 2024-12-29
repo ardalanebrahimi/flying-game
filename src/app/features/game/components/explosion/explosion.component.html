@@ -1,5 +1,6 @@
 <div
+  *ngIf="gameService.state.exploded"
   class="explosion"
-  [style.left.px]="explosionX"
-  [style.top.px]="explosionY"
+  [style.left.px]="gameService.explosionX"
+  [style.top.px]="gameService.explosionY"
 ></div>

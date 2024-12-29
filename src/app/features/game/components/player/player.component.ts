@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { GameService } from '../../../../core/services/game.service';
 
 @Component({
   selector: 'app-player',
@@ -6,6 +7,5 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./player.component.scss'],
 })
 export class PlayerComponent {
-  @Input() playerX: number = 0; // Horizontal position as percentage
-  @Input() rocketVisualPosition: number = 0; // Vertical position
+  constructor(public gameService: GameService) {}
 }

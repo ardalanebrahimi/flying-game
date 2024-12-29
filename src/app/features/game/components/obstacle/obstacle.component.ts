@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Obstacle } from '../../../../core/models/obstacle.model';
 import { CommonModule } from '@angular/common';
+import { GameService } from '../../../../core/services/game.service';
 
 @Component({
   selector: 'app-obstacle',
@@ -9,5 +10,5 @@ import { CommonModule } from '@angular/common';
   imports: [CommonModule],
 })
 export class ObstacleComponent {
-  @Input() obstacles: Obstacle[] = [];
+  constructor(public gameService: GameService) {}
 }

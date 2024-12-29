@@ -1,1 +1,7 @@
-<button class="reset-button" (click)="onClickReset()">Reset</button>
+<button
+  class="reset-button"
+  *ngIf="gameService.state.exploded"
+  (click)="gameService.resetGame()"
+>
+  Reset
+</button>

@@ -19,6 +19,7 @@ export class GameService {
 
   explosionX?: number;
   explosionY?: number;
+  dots: { x: number; y: number }[] = [];
 
   constructor(
     public physics: PhysicsService,
@@ -106,5 +107,37 @@ export class GameService {
       );
       return distance < 40; // Adjust collision radius as needed
     });
+  }
+
+  startDotSpawner(): void {
+    const spawnDotInterval = () => {
+      if (this.physics.getVelocity() !== 0) {
+        this.spawnDot(); // Spawn dots only if thrust is active
+      }
+      const randomDelay = Math.random() * 300 + 100; // More frequent spawning
+      setTimeout(spawnDotInterval, randomDelay);
+    };
+    spawnDotInterval();
+  }
+
+  updateDots(): void {
+    const velocity = this.physics.getVelocity();
+
+    this.dots = this.dots.map((dot) => ({
+      ...dot,
+      y: dot.y + velocity, // Move dots downward
+    }));
+
+    // Remove dots that move off the screen (below the viewport)
+    this.dots = this.dots.filter((dot) => dot.y < window.innerHeight + 100);
+  }
+
+  spawnDot(): void {
+    if (this.state.playerY > 100 && this.physics.getVelocity() !== 0) {
+      // Spawn dots only after height 100
+      const x = Math.random() * window.innerWidth;
+      const y = this.physics.getVelocity() > 0 ? 0 : window.innerHeight;
+      this.dots.push({ x, y });
+    }
   }
 }

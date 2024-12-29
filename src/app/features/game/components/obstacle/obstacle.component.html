@@ -1,5 +1,5 @@
 <div
-  *ngFor="let obstacle of obstacles"
+  *ngFor="let obstacle of gameService.obstacleService.obstacles"
   class="obstacle"
   [style.left.px]="obstacle.x"
   [style.top.px]="obstacle.y"

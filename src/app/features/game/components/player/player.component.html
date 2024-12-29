@@ -1,7 +1,7 @@
 <div
   class="player"
-  [style.left.%]="playerX"
-  [style.bottom.px]="rocketVisualPosition"
+  [style.left.%]="gameService.state.playerX"
+  [style.bottom.px]="gameService.rocketVisualPosition"
 >
   <img src="/rocket.png" alt="Rocket Character" />
 </div>

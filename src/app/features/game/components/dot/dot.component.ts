@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { GameService } from '../../../../core/services/game.service';
 
 @Component({
   selector: 'app-dot',
@@ -7,6 +8,10 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./dot.component.scss'],
   imports: [CommonModule],
 })
-export class DotComponent {
-  @Input() dots: { x: number; y: number }[] = [];
+export class DotComponent implements OnInit {
+  constructor(public gameService: GameService) {}
+
+  ngOnInit(): void {
+    this.gameService.startDotSpawner(); // Spawn dots
+  }
 }
