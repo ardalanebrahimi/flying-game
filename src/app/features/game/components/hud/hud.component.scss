@@ -1,0 +1,21 @@
+.score,
+.speed,
+.stage {
+  position: absolute;
+  left: 10px;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.score {
+  top: 10px;
+}
+
+.speed {
+  top: 40px;
+}
+
+.stage {
+  top: 70px;
+}

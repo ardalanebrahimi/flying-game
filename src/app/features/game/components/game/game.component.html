@@ -1,63 +1,28 @@
 <div class="game-container" [ngStyle]="backgroundStyle">
-  <!-- Render dots -->
-  <div
-    *ngFor="let dot of dots"
-    class="dot"
-    [style.left.px]="dot.x"
-    [style.top.px]="dot.y"
-  ></div>
-
-  <!-- Render obstacles -->
-  <div
-    *ngFor="let obstacle of gameService.obstacleService.obstacles"
-    class="obstacle"
-    [style.left.px]="obstacle.x"
-    [style.top.px]="obstacle.y"
-    [style.width.px]="obstacle.size"
-    [style.height.px]="obstacle.size"
-  >
-    <img [src]="obstacle.image" [alt]="obstacle.type" />
-  </div>
-
-  <!-- Render explosion -->
-  <div
+  <app-dot [dots]="dots"></app-dot>
+  <app-obstacle
+    [obstacles]="gameService.obstacleService.obstacles"
+  ></app-obstacle>
+  <app-explosion
     *ngIf="gameService.state.exploded"
-    class="explosion"
-    [style.left.px]="gameService.explosionX"
-    [style.top.px]="gameService.explosionY"
-  ></div>
-
-  <!-- Render reset button -->
-  <button
-    class="reset-button"
+    [explosionX]="gameService.explosionX"
+    [explosionY]="gameService.explosionY"
+  ></app-explosion>
+  <app-reset-button
     *ngIf="gameService.state.exploded"
-    (click)="gameService.resetGame()"
-  >
-    Reset
-  </button>
-
-  <!-- Ground element -->
+    (reset)="gameService.resetGame()"
+  ></app-reset-button>
   <div class="ground" *ngIf="showGround"></div>
 
-  <!-- Player (rocket) -->
-  <div
-    class="player"
-    [style.left.%]="gameService.state.playerX"
-    [style.bottom.px]="gameService.rocketVisualPosition"
-  >
-    <img src="/rocket.png" alt="Rocket Character" />
-  </div>
-
-  <!-- Score display -->
-  <div class="score">Score: {{ score }}</div>
-
-  <!-- Speed display -->
-  <div class="speed">Speed: {{ rocketSpeedKmh }} km/h</div>
-
-  <!-- Stage display -->
-  <div class="stage">Stage: {{ currentStage }}</div>
-
-  <!-- Fullscreen touch listener -->
+  <app-player
+    [playerX]="gameService.state.playerX"
+    [rocketVisualPosition]="gameService.rocketVisualPosition"
+  ></app-player>
+  <app-hud
+    [score]="gameService.state.score"
+    [rocketSpeedKmh]="rocketSpeedKmh"
+    [currentStage]="gameService.state.currentStage"
+  ></app-hud>
   <div
     class="touch-zone"
     (touchstart)="onTouchStart($event)"

@@ -1,12 +1,26 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { GameService } from '../../../../core/services/game.service';
+import { PlayerComponent } from '../player/player.component';
+import { ObstacleComponent } from '../obstacle/obstacle.component';
+import { DotComponent } from '../dot/dot.component';
+import { HudComponent } from '../hud/hud.component';
+import { ResetButtonComponent } from '../reset-button/reset-button.component';
+import { ExplosionComponent } from '../explosion/explosion.component';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.scss'],
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    PlayerComponent,
+    ObstacleComponent,
+    DotComponent,
+    HudComponent,
+    ResetButtonComponent,
+    ExplosionComponent,
+  ],
 })
 export class GameComponent implements OnInit {
   gameInterval: any;
