@@ -6,6 +6,8 @@ import { Obstacle } from '../models/obstacle.model';
 })
 export class ObstacleService {
   obstacles: Obstacle[] = [];
+  private obstacleMovementInterval: any;
+  private obstacleSpawnerTimeout: any;
 
   private planets = [
     '/obstacles/earth.png',
@@ -18,7 +20,66 @@ export class ObstacleService {
     '/obstacles/grassplanet.png',
   ];
 
-  spawnObstacle(stage: string): void {
+  startObstacleLifecycle(
+    stageCallback: () => string,
+    velocityCallback: () => number
+  ): void {
+    this.startObstacleMovement(velocityCallback);
+    this.startObstacleSpawner(stageCallback, velocityCallback);
+  }
+
+  stopObstacleLifecycle(): void {
+    if (this.obstacleMovementInterval) {
+      clearInterval(this.obstacleMovementInterval);
+    }
+    if (this.obstacleSpawnerTimeout) {
+      clearTimeout(this.obstacleSpawnerTimeout);
+    }
+  }
+
+  private startObstacleSpawner(
+    stageCallback: () => string,
+    velocityCallback: () => number
+  ): void {
+    const spawnObstacleInterval = () => {
+      let delay = 1000; // Default 1-second delay
+      if (velocityCallback() !== 0) {
+        const currentStage = stageCallback();
+
+        // Adjust spawn frequency based on stage
+        let delay = 1000; // Default 1-second delay
+        switch (currentStage) {
+          case 'Earth’s Surface':
+            delay = Math.random() * 2000 + 500; // Less frequent
+            break;
+          case 'Sky':
+            delay = Math.random() * 1000 + 300; // Moderate frequency
+            break;
+          case 'Outer Space':
+            delay = Math.random() * 500 + 200; // High frequency
+            break;
+          case 'Deep Space':
+            delay = Math.random() * 400 + 100; // Very high frequency
+            break;
+        }
+
+        this.spawnObstacle(currentStage);
+      }
+      this.obstacleSpawnerTimeout = setTimeout(spawnObstacleInterval, delay);
+    };
+
+    spawnObstacleInterval();
+  }
+
+  private startObstacleMovement(velocityCallback: () => number): void {
+    this.obstacleMovementInterval = setInterval(() => {
+      if (velocityCallback() !== 0) {
+        this.moveObstacles();
+      }
+    }, 50); // Adjust movement speed
+  }
+
+  private spawnObstacle(stage: string): void {
     const x = Math.random() * window.innerWidth; // Random X position
     const y = 0; // Start at the top edge
 

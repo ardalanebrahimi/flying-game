@@ -29,12 +29,16 @@ export class GameComponent implements OnInit {
 
   ngOnInit(): void {
     this.gameService.startGameLoop(); // Main game loop
-    this.startObstacleSpawner(); // Spawn obstacles
-    this.startObstacleMovement(); // Move obstacles
+
+    this.gameService.obstacleService.startObstacleLifecycle(
+      () => this.gameService.state.currentStage, // Pass stage dynamically
+      () => this.gameService.physics.getVelocity() // Pass velocity dynamically
+    );
   }
 
   ngOnDestroy(): void {
-    this.gameService.stopGameLoop(); // Stop the update loop on destroy
+    this.gameService.stopGameLoop(); // Stop game loop
+    this.gameService.obstacleService.stopObstacleLifecycle(); // Stop obstacles
   }
 
   onTouchMove(event: TouchEvent): void {
@@ -104,42 +108,5 @@ export class GameComponent implements OnInit {
 
   get rocketSpeed(): number {
     return Math.abs(this.gameService.physics.getVelocity()); // Absolute value for speed
-  }
-
-  startObstacleSpawner(): void {
-    const spawnObstacleInterval = () => {
-      if (this.gameService.physics.getVelocity() !== 0) {
-        const currentStage = this.gameService.state.currentStage;
-
-        // Adjust spawn frequency based on stage
-        let delay = 1000; // Default 1-second delay
-        switch (currentStage) {
-          case 'Earth’s Surface':
-            delay = Math.random() * 2000 + 500; // Less frequent
-            break;
-          case 'Sky':
-            delay = Math.random() * 1000 + 300; // Moderate frequency
-            break;
-          case 'Outer Space':
-            delay = Math.random() * 500 + 200; // High frequency
-            break;
-          case 'Deep Space':
-            delay = Math.random() * 400 + 100; // Very high frequency
-            break;
-        }
-
-        this.gameService.obstacleService.spawnObstacle(currentStage);
-      }
-      setTimeout(spawnObstacleInterval, 1000); // Debugging with fixed delay
-    };
-    spawnObstacleInterval();
-  }
-
-  startObstacleMovement(): void {
-    setInterval(() => {
-      if (this.gameService.physics.getVelocity() !== 0) {
-        this.gameService.obstacleService.moveObstacles();
-      }
-    }, 50); // Adjust movement speed
   }
 }
