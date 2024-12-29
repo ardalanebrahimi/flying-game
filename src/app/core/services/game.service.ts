@@ -2,16 +2,21 @@ import { Injectable } from '@angular/core';
 import { PhysicsService } from './physics.service';
 import { StageService } from './stage.service';
 import { ObstacleService } from './obstacle.service';
+import { GameState } from '../models/game.model';
+import { Stage } from '../models/stage.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
-  score = 0;
-  playerY = 0; // Vertical position
-  playerX = 50; // Horizontal position (percentage of screen width)
+  state: GameState = {
+    score: 0,
+    playerY: 0, // Vertical position
+    playerX: 50, // Horizontal position (percentage of screen width)
+    exploded: false,
+    currentStage: '',
+  };
 
-  currentStage: any;
   explosionX?: number;
   explosionY?: number;
 
@@ -22,84 +27,78 @@ export class GameService {
   ) {}
 
   applyThrust(): void {
-    if (this.exploded) return; // Prevent movement if exploded
+    if (this.state.exploded) return; // Prevent movement if exploded
     this.physics.applyThrust(); // Delegate thrust logic to PhysicsService
   }
 
   moveLeft(): void {
-    if (this.exploded) {
-      return;
-    }
-    this.playerX -= 2;
-    if (this.playerX < 0) {
-      this.playerX = 0; // Prevent moving out of bounds (left)
-    }
+    if (this.state.exploded) return;
+    this.state.playerX -= 2;
+    if (this.state.playerX < 0) this.state.playerX = 0; // Prevent moving out of bounds (left)
   }
 
   moveRight(): void {
-    if (this.exploded) {
-      return;
-    }
-    this.playerX += 2;
-    if (this.playerX > 100) {
-      this.playerX = 100; // Prevent moving out of bounds (right)
-    }
+    if (this.state.exploded) return;
+    this.state.playerX += 2;
+    if (this.state.playerX > 100) this.state.playerX = 100; // Prevent moving out of bounds (right)
   }
 
   updateGame(): void {
-    if (this.exploded) {
-      return; // Do nothing if exploded
-    }
+    if (this.state.exploded) return;
+
     const HEIGHT_SCALE = 0.2; // Scale height progression
     this.physics.applyGravity(); // Apply physics calculations
-    this.playerY += this.physics.getVelocity() * HEIGHT_SCALE; // Update vertical position with scaling
+    this.state.playerY += this.physics.getVelocity() * HEIGHT_SCALE; // Update vertical position
 
     // Prevent falling below ground
-    if (this.playerY < 0) {
-      this.playerY = 0;
+    if (this.state.playerY < 0) {
+      this.state.playerY = 0;
       this.physics.reset(); // Reset velocity when hitting the ground
     }
 
     // Update current stage based on height
-    this.currentStage = this.stageService.getStageForHeight(this.playerY);
-    this.physics.gravity = this.currentStage.gravity; // Update gravity
-    this.physics.maxUpwardVelocity = this.currentStage.maxSpeed; // Update max speed
-    this.physics.deceleration = this.currentStage.deceleration || -1; // Update deceleration
+    const currentStage: Stage = this.stageService.getStageForHeight(
+      this.state.playerY
+    );
+    this.state.currentStage = currentStage.name;
+    this.physics.gravity = currentStage.gravity; // Update gravity
+    this.physics.maxUpwardVelocity = currentStage.maxSpeed; // Update max speed
+    this.physics.deceleration = currentStage.deceleration || -1; // Update deceleration
 
     // Update score based on height
-    this.score = Math.max(0, Math.floor(this.playerY));
+    this.state.score = Math.max(0, Math.floor(this.state.playerY));
 
     // Check for collisions
-    if (this.checkCollisions()) {
-      this.triggerExplosion(); // Trigger explosion on collision
-    }
+    if (this.checkCollisions()) this.triggerExplosion();
   }
 
   get rocketVisualPosition(): number {
     const screenHeight = window.innerHeight;
-    return Math.min(this.playerY, screenHeight * 0.25); // One-fourth from the bottom
+    return Math.min(this.state.playerY, screenHeight * 0.25); // One-fourth from the bottom
   }
-  exploded = false;
 
   triggerExplosion(): void {
-    this.exploded = true;
+    this.state.exploded = true;
     this.physics.reset(); // Stop motion
-    this.explosionX = this.playerX * (window.innerWidth / 100); // Rocket's X position on screen
+    this.explosionX = this.state.playerX * (window.innerWidth / 100); // Rocket's X position on screen
     this.explosionY = window.innerHeight - this.rocketVisualPosition; // Rocket's Y position on screen
   }
 
   resetGame(): void {
-    this.score = 0;
-    this.playerY = 0;
-    this.playerX = 50;
+    this.state = {
+      score: 0,
+      playerY: 0,
+      playerX: 50,
+      exploded: false,
+      currentStage: '',
+    };
     this.physics.reset();
     this.obstacleService.clearObstacles();
-    this.exploded = false;
   }
 
   checkCollisions(): boolean {
-    const rocketX = this.playerX * (window.innerWidth / 100); // Rocket's X position
-    const rocketY = window.innerHeight - this.rocketVisualPosition - 25; // Rocket's Center's Y on screen
+    const rocketX = this.state.playerX * (window.innerWidth / 100); // Rocket's X position
+    const rocketY = window.innerHeight - this.rocketVisualPosition - 25; // Rocket's Center Y on screen
 
     return this.obstacleService.obstacles.some((obstacle) => {
       const distance = Math.sqrt(

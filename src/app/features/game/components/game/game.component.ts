@@ -48,12 +48,12 @@ export class GameComponent implements OnInit {
   }
 
   @HostListener('mousedown', ['$event'])
-  onMouseDown(event: MouseEvent): void {
+  onMouseDown(): void {
     this.gameService.applyThrust(); // Trigger thrust through GameService
   }
 
   @HostListener('mouseup', ['$event'])
-  onMouseUp(event: MouseEvent): void {
+  onMouseUp(): void {
     this.gameService.physics.stopFlying(); // Stop thrust by resetting velocity
   }
 
@@ -84,20 +84,21 @@ export class GameComponent implements OnInit {
   }
 
   get playerY() {
-    return this.gameService.playerY;
+    return this.gameService.state.playerY;
   }
 
   get score() {
-    return this.gameService.score;
+    return this.gameService.state.score;
   }
 
   get currentStage(): string {
-    return this.gameService.currentStage.name;
+    return this.gameService.state.currentStage;
   }
 
   get backgroundStyle() {
     return {
-      'background-image': this.gameService.currentStage.background,
+      'background-image':
+        this.gameService.stageService.getCurrentStage().background,
       'background-position-y': `${this.backgroundPositionY}px`,
     };
   }
@@ -105,13 +106,12 @@ export class GameComponent implements OnInit {
   updateBackground(): void {
     const maxScroll = -window.innerHeight * 2; // Prevent scrolling past the gradient's end
     this.backgroundPositionY = Math.max(
-      -this.gameService.playerY / 2,
+      -this.gameService.state.playerY / 2,
       maxScroll
     );
   }
-
   get showGround(): boolean {
-    return this.gameService.playerY < 200; // Ground is visible at surface level
+    return this.gameService.state.playerY < 200; // Ground is visible at surface level
   }
 
   get rocketSpeed(): number {
@@ -126,24 +126,30 @@ export class GameComponent implements OnInit {
       (velocityInPixelsPerSecond / PIXELS_PER_KILOMETER) * 3600;
     return Math.round(speedInKmh); // Allow negative values for falling
   }
+
   startObstacleSpawner(): void {
     const spawnObstacleInterval = () => {
       if (this.gameService.physics.getVelocity() !== 0) {
-        const currentStage = this.gameService.currentStage.name;
+        const currentStage = this.gameService.state.currentStage;
 
         // Adjust spawn frequency based on stage
         let delay = 1000; // Default 1-second delay
-        if (currentStage === 'Earth’s Surface') {
-          delay = Math.random() * 2000 + 500; // Less frequent
-        } else if (currentStage === 'Sky') {
-          delay = Math.random() * 1000 + 300; // Moderate frequency
-        } else if (currentStage === 'Outer Space') {
-          delay = Math.random() * 500 + 200; // High frequency
-        } else if (currentStage === 'Deep Space') {
-          delay = Math.random() * 400 + 100; // Very high frequency
+        switch (currentStage) {
+          case 'Earth’s Surface':
+            delay = Math.random() * 2000 + 500; // Less frequent
+            break;
+          case 'Sky':
+            delay = Math.random() * 1000 + 300; // Moderate frequency
+            break;
+          case 'Outer Space':
+            delay = Math.random() * 500 + 200; // High frequency
+            break;
+          case 'Deep Space':
+            delay = Math.random() * 400 + 100; // Very high frequency
+            break;
         }
 
-        this.gameService.obstacleService.spawnObstacle(currentStage); // Spawn based on stage
+        this.gameService.obstacleService.spawnObstacle(currentStage);
       }
       setTimeout(spawnObstacleInterval, 1000); // Debugging with fixed delay
     };
@@ -155,12 +161,7 @@ export class GameComponent implements OnInit {
       if (this.gameService.physics.getVelocity() !== 0) {
         this.gameService.obstacleService.moveObstacles();
       }
-    }, 50); // Adjust movement speed (20 times per second)
-  }
-
-  get showStars(): boolean {
-    // Introduce a buffer to avoid toggling near the threshold
-    return this.gameService.playerY > 350; // Adjust buffer as needed
+    }, 50); // Adjust movement speed
   }
 
   dots: { x: number; y: number }[] = []; // Track dot positions
@@ -190,7 +191,7 @@ export class GameComponent implements OnInit {
 
   spawnDot(): void {
     if (
-      this.gameService.playerY > 100 &&
+      this.gameService.state.playerY > 100 &&
       this.gameService.physics.getVelocity() !== 0
     ) {
       // Spawn dots only after height 100

@@ -1,10 +1,13 @@
 <div class="game-container" [ngStyle]="backgroundStyle">
+  <!-- Render dots -->
   <div
     *ngFor="let dot of dots"
     class="dot"
     [style.left.px]="dot.x"
     [style.top.px]="dot.y"
   ></div>
+
+  <!-- Render obstacles -->
   <div
     *ngFor="let obstacle of gameService.obstacleService.obstacles"
     class="obstacle"
@@ -15,31 +18,46 @@
   >
     <img [src]="obstacle.image" [alt]="obstacle.type" />
   </div>
+
+  <!-- Render explosion -->
   <div
-    *ngIf="gameService.exploded"
+    *ngIf="gameService.state.exploded"
     class="explosion"
     [style.left.px]="gameService.explosionX"
     [style.top.px]="gameService.explosionY"
   ></div>
+
+  <!-- Render reset button -->
   <button
     class="reset-button"
-    *ngIf="gameService.exploded"
+    *ngIf="gameService.state.exploded"
     (click)="gameService.resetGame()"
   >
     Reset
   </button>
+
+  <!-- Ground element -->
   <div class="ground" *ngIf="showGround"></div>
+
+  <!-- Player (rocket) -->
   <div
     class="player"
-    [style.left.%]="gameService.playerX"
+    [style.left.%]="gameService.state.playerX"
     [style.bottom.px]="gameService.rocketVisualPosition"
   >
     <img src="/rocket.png" alt="Rocket Character" />
   </div>
+
+  <!-- Score display -->
   <div class="score">Score: {{ score }}</div>
+
+  <!-- Speed display -->
   <div class="speed">Speed: {{ rocketSpeedKmh }} km/h</div>
+
+  <!-- Stage display -->
   <div class="stage">Stage: {{ currentStage }}</div>
-  <!-- Add a fullscreen touch listener -->
+
+  <!-- Fullscreen touch listener -->
   <div
     class="touch-zone"
     (touchstart)="onTouchStart($event)"

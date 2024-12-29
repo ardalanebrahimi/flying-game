@@ -13,47 +13,33 @@ export class PhysicsService {
 
   applyThrust(): void {
     this.startFlying(); // Set flying state
-    this.velocity += this.thrust; // Apply thrust
-    if (this.velocity > this.maxUpwardVelocity) {
-      this.velocity = this.maxUpwardVelocity; // Cap upward velocity
-    }
+    this.velocity = Math.min(
+      this.velocity + this.thrust,
+      this.maxUpwardVelocity
+    ); // Apply thrust and cap upward velocity
   }
 
   applyGravity(): void {
     if (this.isFlying) {
-      this.velocity += this.thrust; // Apply thrust when flying
+      this.velocity = Math.min(
+        this.velocity + this.thrust,
+        this.maxUpwardVelocity
+      ); // Apply thrust while flying
+    } else if (this.gravity === 0) {
+      this.handleZeroGravityDeceleration(); // Decelerate in zero-gravity stages
     } else {
-      if (this.gravity === 0) {
-        // Decelerate in zero-gravity stages only until velocity reaches 0
-        if (this.velocity > 0) {
-          this.velocity += this.deceleration; // Decelerate upward motion
-          if (this.velocity < 0) {
-            this.velocity = 0; // Stop at 0 in zero gravity
-          }
-        }
-      } else {
-        // Apply gravity in stages with gravity
-        this.velocity += this.gravity;
-
-        // Apply deceleration for air resistance
-        if (this.velocity > 0) {
-          this.velocity += this.deceleration;
-        }
-      }
+      this.handleGravityWithAirResistance(); // Apply gravity and air resistance
     }
 
-    // Cap the velocity within the defined limits
-    if (this.velocity > this.maxUpwardVelocity) {
-      this.velocity = this.maxUpwardVelocity;
-    }
-
-    if (this.velocity < this.maxDownwardVelocity) {
-      this.velocity = this.maxDownwardVelocity;
-    }
+    // Ensure velocity remains within defined limits
+    this.velocity = Math.max(
+      Math.min(this.velocity, this.maxUpwardVelocity),
+      this.maxDownwardVelocity
+    );
   }
 
   getVelocity(): number {
-    return this.velocity; // Return current velocity
+    return this.velocity; // Return the current velocity
   }
 
   startFlying(): void {
@@ -66,5 +52,43 @@ export class PhysicsService {
 
   reset(): void {
     this.velocity = 0; // Reset velocity
+    this.isFlying = false; // Reset flying state
+  }
+
+  setGravity(value: number): void {
+    this.gravity = value; // Dynamically set gravity
+  }
+
+  setThrust(value: number): void {
+    this.thrust = value; // Dynamically set thrust
+  }
+
+  setMaxUpwardVelocity(value: number): void {
+    this.maxUpwardVelocity = value; // Dynamically set max upward velocity
+  }
+
+  setMaxDownwardVelocity(value: number): void {
+    this.maxDownwardVelocity = value; // Dynamically set max downward velocity
+  }
+
+  setDeceleration(value: number): void {
+    this.deceleration = value; // Dynamically set deceleration
+  }
+
+  private handleZeroGravityDeceleration(): void {
+    if (this.velocity > 0) {
+      this.velocity += this.deceleration; // Decelerate upward motion
+      if (this.velocity < 0) {
+        this.velocity = 0; // Stop at 0 in zero gravity
+      }
+    }
+  }
+
+  private handleGravityWithAirResistance(): void {
+    this.velocity += this.gravity; // Apply gravity
+
+    if (this.velocity > 0) {
+      this.velocity += this.deceleration; // Apply air resistance to upward motion
+    }
   }
 }
