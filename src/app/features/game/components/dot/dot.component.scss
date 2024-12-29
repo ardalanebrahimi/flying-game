@@ -6,3 +6,12 @@
   border-radius: 50%;
   opacity: 0.7; /* Slight transparency for a better visual effect */
 }
+
+@keyframes moveDot {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(100vh); /* Move down the screen */
+  }
+}

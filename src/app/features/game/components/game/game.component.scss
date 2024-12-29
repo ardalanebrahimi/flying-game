@@ -13,64 +13,6 @@
   transition: background-position 0.1s linear;
 }
 
-.ground {
-  position: absolute;
-  bottom: 0;
-  height: 50px;
-  width: 100%;
-  background: #654321;
-  transition: opacity 0.5s ease-in-out;
-}
-
-.player {
-  position: absolute;
-  transform: translateX(-50%);
-  width: 50px;
-  height: 50px;
-  transition: left 0.1s linear; /* Smooth horizontal movement */
-}
-
-img {
-  width: 100%;
-  height: 100%;
-}
-
-.score {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  color: white;
-  font-size: 24px;
-  font-weight: bold;
-}
-
-.speed {
-  position: absolute;
-  top: 40px;
-  left: 10px;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.dot {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  background: white;
-  border-radius: 50%;
-  opacity: 0.7; /* Slight transparency for a better visual effect */
-}
-
-@keyframes moveDot {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(100vh); /* Move down the screen */
-  }
-}
-
 .touch-zone {
   position: absolute;
   top: 0;
@@ -81,80 +23,11 @@ img {
   background: transparent; /* Fully invisible */
 }
 
-.touch-zone.left {
-  left: 0;
-}
-
-.touch-zone.right {
-  right: 0;
-}
-
-.stage {
+.ground {
   position: absolute;
-  top: 70px;
-  left: 10px;
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-}
-
-.obstacle {
-  position: absolute;
-  width: 50px;
+  bottom: 0;
   height: 50px;
-  overflow: hidden;
-  transform: translate(-50%, -50%);
-}
-
-.obstacle img {
   width: 100%;
-  height: 100%;
-  object-fit: contain; /* Ensures the image fits well */
-  animation: rotate 5s linear infinite; /* Continuous rotation */
-  transform-origin: center; /* Rotate around the center */
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.explosion {
-  position: absolute;
-  width: 100px;
-  height: 100px;
-  background: radial-gradient(circle, red, orange, yellow, transparent);
-  border-radius: 50%;
-  transform: translate(-50%, -50%); /* Center explosion */
-  animation: explode 1s ease-out;
-}
-
-@keyframes explode {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(3);
-    opacity: 0;
-  }
-}
-
-.reset-button {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 10px 20px;
-  font-size: 20px;
-  color: white;
-  background-color: red;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  z-index: 11;
+  background: #654321;
+  transition: opacity 0.5s ease-in-out;
 }
