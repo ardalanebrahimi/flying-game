@@ -1,12 +1,12 @@
 import { Component, OnInit, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GameService } from '../../../../core/services/game.service';
 import { PlayerComponent } from '../player/player.component';
 import { ObstacleComponent } from '../obstacle/obstacle.component';
 import { DotComponent } from '../dot/dot.component';
 import { HudComponent } from '../hud/hud.component';
 import { ResetButtonComponent } from '../reset-button/reset-button.component';
 import { ExplosionComponent } from '../explosion/explosion.component';
+import { GameService } from './game.service';
 
 @Component({
   selector: 'app-game',

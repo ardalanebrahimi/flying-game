@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { DotService } from './dot.service';
 
 describe('DotService', () => {

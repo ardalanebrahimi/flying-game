@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Obstacle } from '../models/obstacle.model';
+import { Obstacle } from '../../../../core/models/obstacle.model';
 
 @Injectable({
   providedIn: 'root',

@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { PhysicsService } from './physics.service';
-import { StageService } from './stage.service';
-import { ObstacleService } from './obstacle.service';
-import { GameState } from '../models/game.model';
-import { Stage } from '../models/stage.model';
-import { DotService } from './dot.service';
+import { GameState } from '../../../../core/models/game.model';
+import { PhysicsService } from '../../../../core/services/physics.service';
+import { StageService } from '../../../../core/services/stage.service';
+import { ObstacleService } from '../obstacle/obstacle.service';
+import { DotService } from '../dot/dot.service';
+import { Stage } from '../../../../core/models/stage.model';
 
 @Injectable({
   providedIn: 'root',

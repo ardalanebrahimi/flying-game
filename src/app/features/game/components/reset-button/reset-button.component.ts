@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { GameService } from '../../../../core/services/game.service';
 import { CommonModule } from '@angular/common';
+import { GameService } from '../game/game.service';
 
 @Component({
   selector: 'app-reset-button',

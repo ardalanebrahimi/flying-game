@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
-import { GameService } from '../../../../core/services/game.service';
+import { GameService } from '../game/game.service';
 
 @Component({
   selector: 'app-dot',
