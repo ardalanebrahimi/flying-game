@@ -1,6 +1,6 @@
 import { Component, OnInit, HostListener } from '@angular/core';
-import { GameService } from '../game.service';
 import { CommonModule } from '@angular/common';
+import { GameService } from '../../../../core/services/game.service';
 
 @Component({
   selector: 'app-game',
