@@ -2,7 +2,9 @@
   class="game-container"
   [style.background-color]="gameService.currentBackgroundColor"
 >
-  <button class="pause-button" (click)="togglePause()">⏸︎</button>
+  <button class="pause-button" (click)="togglePause()" *ngIf="!isPaused">
+    ⏸︎
+  </button>
   <div class="pause-menu" *ngIf="isPaused">
     <button (click)="resumeGame()">Resume</button>
     <button (click)="resetGame()">Reset</button>

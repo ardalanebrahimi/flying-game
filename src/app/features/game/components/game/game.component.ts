@@ -31,12 +31,17 @@ export class GameComponent implements OnInit {
   constructor(public gameService: GameService, private router: Router) {}
 
   ngOnInit(): void {
+    this.startGameLoop();
+  }
+
+  private startGameLoop() {
     this.gameService.startGameLoop(); // Main game loop
 
     this.gameService.obstacleService.startObstacleLifecycle(
       () => this.gameService.state.currentStage, // Pass stage dynamically
-      () => this.gameService.physics.getVelocity() // Pass velocity dynamically
+      () => this.gameService.physics.getVelocity()
     );
+    this.gameService.dotService.startDotSpawner();
   }
 
   ngOnDestroy(): void {
@@ -127,20 +132,20 @@ export class GameComponent implements OnInit {
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
       this.gameService.stopGameLoop(); // Stop the game loop
-    } else {
-      this.gameService.startGameLoop(); // Resume the game loop
+      this.gameService.obstacleService.stopObstacleLifecycle(); // Stop obstacles
+      this.gameService.dotService.stopDotSpawner();
     }
   }
 
   resumeGame(): void {
     this.isPaused = false;
-    this.gameService.startGameLoop();
+    this.startGameLoop();
   }
 
   resetGame(): void {
     this.isPaused = false;
     this.gameService.resetGame();
-    this.gameService.startGameLoop();
+    this.startGameLoop();
   }
 
   navigateToStart(): void {
