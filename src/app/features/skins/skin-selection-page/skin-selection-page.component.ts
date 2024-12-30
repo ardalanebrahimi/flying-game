@@ -1,5 +1,6 @@
-import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { SKINS } from '../skins';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component({
@@ -9,24 +10,20 @@ import { Router } from '@angular/router';
   imports: [CommonModule],
 })
 export class SkinSelectionPageComponent {
-  skins = [
-    { name: 'Rocket', image: '/skins/rocket.png' },
-    { name: 'Rocket1', image: '/skins/rocket1.png' },
-    { name: 'Tree2', image: '/skins/tree2.png' },
-    { name: 'Lightening', image: '/skins/lightening.png' },
-  ];
-  selectedSkin: number | null = null;
-
+  skins = SKINS;
+  selectedSkinId: number | null = null;
   constructor(private router: Router) {}
 
-  selectSkin(index: number): void {
-    this.selectedSkin = index;
+  selectSkin(skinId: number): void {
+    this.selectedSkinId = skinId;
   }
-
   confirmSelection(): void {
-    if (this.selectedSkin !== null) {
-      const selectedSkin = this.skins[this.selectedSkin];
-      localStorage.setItem('selectedSkin', JSON.stringify(selectedSkin)); // Save to localStorage
+    const selectedSkin = this.skins.find(
+      (skin) => skin.id === this.selectedSkinId
+    );
+
+    if (selectedSkin) {
+      localStorage.setItem('selectedSkin', JSON.stringify(selectedSkin));
       this.router.navigate(['/game']); // Navigate to the game
     } else {
       alert('Please select a skin!');

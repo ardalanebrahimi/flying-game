@@ -1,15 +1,12 @@
-<div class="skin-selection-container">
-  <h1>Choose Your Skin</h1>
-  <div class="skins">
-    <div
-      *ngFor="let skin of skins; let i = index"
-      class="skin"
-      [class.selected]="selectedSkin === i"
-      (click)="selectSkin(i)"
-    >
-      <img [src]="skin.image" [alt]="skin.name" />
-      <p>{{ skin.name }}</p>
-    </div>
+<div class="skin-container">
+  <div
+    class="skin-card"
+    *ngFor="let skin of skins"
+    [class.selected]="skin.id === selectedSkinId"
+    (click)="selectSkin(skin.id)"
+  >
+    <img [src]="skin.image" [alt]="skin.name" />
+    <p>{{ skin.name }}</p>
   </div>
   <button (click)="confirmSelection()">Confirm</button>
   <button (click)="goBack()">Back</button>
