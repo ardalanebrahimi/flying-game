@@ -44,6 +44,12 @@ export class GameComponent implements OnInit {
     this.gameService.dotService.startDotSpawner();
   }
 
+  private stopGameLoop() {
+    this.gameService.stopGameLoop(); // Stop the game loop
+    this.gameService.obstacleService.stopObstacleLifecycle(); // Stop obstacles
+    this.gameService.dotService.stopDotSpawner();
+  }
+
   ngOnDestroy(): void {
     this.gameService.stopGameLoop(); // Stop game loop
     this.gameService.obstacleService.stopObstacleLifecycle(); // Stop obstacles
@@ -131,9 +137,7 @@ export class GameComponent implements OnInit {
   togglePause(): void {
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
-      this.gameService.stopGameLoop(); // Stop the game loop
-      this.gameService.obstacleService.stopObstacleLifecycle(); // Stop obstacles
-      this.gameService.dotService.stopDotSpawner();
+      this.stopGameLoop();
     }
   }
 
@@ -150,7 +154,8 @@ export class GameComponent implements OnInit {
 
   navigateToStart(): void {
     this.isPaused = false;
-    this.gameService.stopGameLoop();
+    this.gameService.resetGame(); // Reset game state
+    this.stopGameLoop();
     this.router.navigate(['/home']);
   }
 }
