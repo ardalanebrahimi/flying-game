@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SKINS } from '../skins';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -9,14 +9,24 @@ import { Router } from '@angular/router';
   styleUrls: ['./skin-selection-page.component.scss'],
   imports: [CommonModule],
 })
-export class SkinSelectionPageComponent {
+export class SkinSelectionPageComponent implements OnInit {
   skins = SKINS;
   selectedSkinId: number | null = null;
+
   constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    const savedSkin = localStorage.getItem('selectedSkin');
+    if (savedSkin) {
+      const parsedSkin = JSON.parse(savedSkin);
+      this.selectedSkinId = parsedSkin.id; // Set the saved skin as selected
+    }
+  }
 
   selectSkin(skinId: number): void {
     this.selectedSkinId = skinId;
   }
+
   confirmSelection(): void {
     const selectedSkin = this.skins.find(
       (skin) => skin.id === this.selectedSkinId
