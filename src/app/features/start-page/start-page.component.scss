@@ -4,9 +4,37 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(to bottom, #87ceeb, #4682b4);
-  color: white;
+  background: linear-gradient(-45deg, #c03118, #5c5eda, #2764ce, #62de49);
+  background-size: 400% 400%;
+  animation: gradientMove 10s ease infinite;
   text-align: center;
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes scrollStars {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.start-page h1 {
+  font-size: 36px;
+  font-weight: bold;
+  animation: fadeIn 2s ease-in-out;
 }
 
 button {
@@ -16,11 +44,42 @@ button {
   color: white;
   background-color: #007bff;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 
   &:hover {
     background-color: #0056b3;
+    transform: scale(1.05); /* Slight zoom on hover */
+  }
+
+  &:active {
+    transform: scale(0.95); /* Slight shrink on click */
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.game-logo {
+  width: 150px;
+  margin-bottom: 20px;
+}
+@media (max-width: 768px) {
+  .start-page h1 {
+    font-size: 28px;
+  }
+
+  button {
+    font-size: 16px;
+    padding: 10px 20px;
   }
 }
