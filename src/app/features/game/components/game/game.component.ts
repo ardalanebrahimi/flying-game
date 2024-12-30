@@ -24,6 +24,8 @@ import { GameService } from './game.service';
 })
 export class GameComponent implements OnInit {
   private initialTouchX: number | null = null;
+  private isTouchNearRocket = false; // Track if the touch starts near the rocket
+  private readonly touchThreshold = 10; // Threshold for detecting proximity (in percentage)
 
   constructor(public gameService: GameService) {}
 
@@ -42,20 +44,16 @@ export class GameComponent implements OnInit {
   }
 
   onTouchMove(event: TouchEvent): void {
-    if (this.initialTouchX !== null) {
-      const currentTouchX = event.touches[0].clientX;
-      const deltaX = currentTouchX - this.initialTouchX;
-
-      if (deltaX > 10) {
-        // Move right if swipe is significant
-        this.gameService.moveRight();
-        this.initialTouchX = currentTouchX; // Update reference point
-      } else if (deltaX < -10) {
-        // Move left if swipe is significant
-        this.gameService.moveLeft();
-        this.initialTouchX = currentTouchX; // Update reference point
-      }
+    if (!this.isTouchNearRocket) {
+      return; // Ignore touch movements that didn't start near the rocket
     }
+
+    const touchX = event.touches[0].clientX; // Get touch X position
+    const screenWidth = window.innerWidth;
+    const playerX = (touchX / screenWidth) * 100; // Convert to percentage
+
+    // Update rocket position and clamp it within bounds
+    this.gameService.state.playerX = Math.max(0, Math.min(100, playerX));
   }
 
   @HostListener('mousedown', ['$event'])
@@ -71,7 +69,22 @@ export class GameComponent implements OnInit {
   @HostListener('touchstart', ['$event'])
   onTouchStart(event: TouchEvent): void {
     this.gameService.applyThrust(); // Trigger thrust through GameService
-    this.initialTouchX = event.touches[0].clientX;
+    const touchX = event.touches[0].clientX; // Get touch X position
+    const screenWidth = window.innerWidth;
+    const touchPercentage = (touchX / screenWidth) * 100; // Convert to percentage
+
+    // Check if touch is near the rocket
+    const rocketX = this.gameService.state.playerX;
+    this.isTouchNearRocket =
+      Math.abs(touchPercentage - rocketX) <= this.touchThreshold;
+
+    // If the touch is near the rocket, allow movement
+    if (this.isTouchNearRocket) {
+      this.gameService.state.playerX = Math.max(
+        0,
+        Math.min(100, touchPercentage)
+      );
+    }
   }
 
   @HostListener('touchend', ['$event'])

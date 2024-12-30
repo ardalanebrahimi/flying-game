@@ -108,7 +108,7 @@ export class GameService {
 
   get rocketVisualPosition(): number {
     const screenHeight = window.innerHeight;
-    return Math.min(this.state.playerY, screenHeight * 0.25); // One-fourth from the bottom
+    return Math.min(this.state.playerY, screenHeight / 3);
   }
 
   triggerExplosion(): void {
