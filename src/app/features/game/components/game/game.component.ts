@@ -56,6 +56,7 @@ export class GameComponent implements OnInit {
   }
 
   onTouchMove(event: TouchEvent): void {
+    if (this.gameService.state.exploded || this.isPaused) return;
     if (!this.isTouchNearRocket) {
       return; // Ignore touch movements that didn't start near the rocket
     }
@@ -80,6 +81,7 @@ export class GameComponent implements OnInit {
 
   @HostListener('touchstart', ['$event'])
   onTouchStart(event: TouchEvent): void {
+    if (this.gameService.state.exploded || this.isPaused) return;
     this.gameService.applyThrust(); // Trigger thrust through GameService
     const touchX = event.touches[0].clientX; // Get touch X position
     const screenWidth = window.innerWidth;
