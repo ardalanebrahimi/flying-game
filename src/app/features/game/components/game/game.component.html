@@ -1,4 +1,7 @@
-<div class="game-container" [ngStyle]="gameService.backgroundStyle">
+<div
+  class="game-container"
+  [style.background-color]="gameService.currentBackgroundColor"
+>
   <app-dot></app-dot>
   <app-obstacle></app-obstacle>
   <app-explosion></app-explosion>

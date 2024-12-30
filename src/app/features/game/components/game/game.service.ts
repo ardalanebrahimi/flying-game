@@ -23,6 +23,7 @@ export class GameService {
   explosionY?: number;
   dots: { x: number; y: number }[] = [];
   backgroundPositionY = 0; // Track background scroll position
+  currentBackgroundColor: string = '#87ceeb'; // Initial background color
 
   constructor(
     public physics: PhysicsService,
@@ -79,7 +80,9 @@ export class GameService {
     const currentStage: Stage = this.stageService.getStageForHeight(
       this.state.playerY
     );
-    this.state.currentStage = currentStage.name;
+    // Smooth background transition
+    this.transitBackgroundColor(currentStage);
+
     this.physics.gravity = currentStage.gravity; // Update gravity
     this.physics.maxUpwardVelocity = currentStage.maxSpeed; // Update max speed
     this.physics.deceleration = currentStage.deceleration || -1; // Update deceleration
@@ -92,6 +95,21 @@ export class GameService {
 
     // Check for collisions
     if (this.checkCollisions()) this.triggerExplosion();
+  }
+
+  private transitBackgroundColor(currentStage: Stage) {
+    if (this.state.currentStage !== currentStage.name) {
+      this.state.currentStage = currentStage.name;
+      this.currentBackgroundColor = this.extractBackgroundColor(
+        currentStage.background
+      );
+    }
+  }
+
+  // Helper to extract a representative color from the gradient
+  private extractBackgroundColor(gradient: string): string {
+    const matches = gradient.match(/#[0-9a-fA-F]{6}/g); // Extract hex colors
+    return matches ? matches[0] : '#87ceeb'; // Default if no match
   }
 
   private updateBackground(): void {

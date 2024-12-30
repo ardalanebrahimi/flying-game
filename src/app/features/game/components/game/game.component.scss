@@ -2,15 +2,8 @@
   position: relative;
   height: 100vh;
   overflow: hidden;
-  background: linear-gradient(
-    to bottom,
-    #87ceeb 0%,
-    #4682b4 30%,
-    #000000 70%,
-    #000000 100%
-  );
-  background-size: 100% 300%;
-  transition: background-position 0.1s linear;
+  background-color: var(--background-color, #87ceeb); /* Default color */
+  transition: background-color 2s ease; /* Smooth color transition */
 }
 
 .touch-zone {
