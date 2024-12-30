@@ -7,6 +7,7 @@ import { HudComponent } from '../hud/hud.component';
 import { ResetButtonComponent } from '../reset-button/reset-button.component';
 import { ExplosionComponent } from '../explosion/explosion.component';
 import { GameService } from './game.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-game',
@@ -23,11 +24,11 @@ import { GameService } from './game.service';
   ],
 })
 export class GameComponent implements OnInit {
-  private initialTouchX: number | null = null;
   private isTouchNearRocket = false; // Track if the touch starts near the rocket
   private readonly touchThreshold = 10; // Threshold for detecting proximity (in percentage)
+  isPaused = false;
 
-  constructor(public gameService: GameService) {}
+  constructor(public gameService: GameService, private router: Router) {}
 
   ngOnInit(): void {
     this.gameService.startGameLoop(); // Main game loop
@@ -90,7 +91,6 @@ export class GameComponent implements OnInit {
   @HostListener('touchend', ['$event'])
   onTouchEnd(event: TouchEvent): void {
     this.gameService.physics.stopFlying(); // Stop thrust by resetting velocity
-    this.initialTouchX = null; // Reset the reference point
   }
 
   @HostListener('document:keydown', ['$event'])
@@ -121,5 +121,31 @@ export class GameComponent implements OnInit {
 
   get rocketSpeed(): number {
     return Math.abs(this.gameService.physics.getVelocity()); // Absolute value for speed
+  }
+
+  togglePause(): void {
+    this.isPaused = !this.isPaused;
+    if (this.isPaused) {
+      this.gameService.stopGameLoop(); // Stop the game loop
+    } else {
+      this.gameService.startGameLoop(); // Resume the game loop
+    }
+  }
+
+  resumeGame(): void {
+    this.isPaused = false;
+    this.gameService.startGameLoop();
+  }
+
+  resetGame(): void {
+    this.isPaused = false;
+    this.gameService.resetGame();
+    this.gameService.startGameLoop();
+  }
+
+  navigateToStart(): void {
+    this.isPaused = false;
+    this.gameService.stopGameLoop();
+    this.router.navigate(['/home']);
   }
 }

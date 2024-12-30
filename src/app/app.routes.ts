@@ -5,6 +5,7 @@ import { SkinSelectionPageComponent } from './features/skins/skin-selection-page
 
 export const routes: Routes = [
   { path: '', component: StartPageComponent },
+  { path: 'home', component: StartPageComponent },
   { path: 'game', component: GameComponent },
   { path: 'skin-selection', component: SkinSelectionPageComponent },
 ];
