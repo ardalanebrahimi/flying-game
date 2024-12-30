@@ -10,6 +10,7 @@ import { Router } from '@angular/router';
 })
 export class SkinSelectionPageComponent {
   skins = [
+    { name: 'Rocket', image: '/skins/rocket.png' },
     { name: 'Rocket1', image: '/skins/rocket1.png' },
     { name: 'Tree2', image: '/skins/tree2.png' },
     { name: 'Lightening', image: '/skins/lightening.png' },

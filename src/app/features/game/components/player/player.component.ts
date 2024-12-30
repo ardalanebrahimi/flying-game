@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { GameService } from '../game/game.service';
 
 @Component({
@@ -6,6 +6,14 @@ import { GameService } from '../game/game.service';
   templateUrl: './player.component.html',
   styleUrls: ['./player.component.scss'],
 })
-export class PlayerComponent {
+export class PlayerComponent implements OnInit {
+  skinImage: string = '/skins/rocket.png'; // Default skin
   constructor(public gameService: GameService) {}
+
+  ngOnInit(): void {
+    const selectedSkin = localStorage.getItem('selectedSkin');
+    if (selectedSkin) {
+      this.skinImage = JSON.parse(selectedSkin).image;
+    }
+  }
 }
