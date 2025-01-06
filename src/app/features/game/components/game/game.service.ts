@@ -5,6 +5,7 @@ import { StageService } from '../../../../core/services/stage.service';
 import { ObstacleService } from '../obstacle/obstacle.service';
 import { DotService } from '../dot/dot.service';
 import { Stage } from '../../../../core/models/stage.model';
+import { LeaderboardService } from '../../../../core/services/leaderboard.service';
 
 @Injectable({
   providedIn: 'root',
@@ -29,7 +30,8 @@ export class GameService {
     public physics: PhysicsService,
     public stageService: StageService,
     public obstacleService: ObstacleService,
-    public dotService: DotService
+    public dotService: DotService,
+    private leaderboardService: LeaderboardService
   ) {}
 
   startGameLoop(): void {
@@ -94,7 +96,20 @@ export class GameService {
     this.updateBackground();
 
     // Check for collisions
-    if (this.checkCollisions()) this.triggerExplosion();
+    if (this.checkCollisions()) {
+      this.triggerExplosion();
+      this.endGame();
+    }
+  }
+
+  endGame(): void {
+    const playerName = prompt('Enter your name:');
+    const score = this.state.score;
+    if (playerName) {
+      this.leaderboardService.addEntry({ playerName, score }).then(() => {
+        alert('Score submitted!');
+      });
+    }
   }
 
   private transitBackgroundColor(currentStage: Stage) {

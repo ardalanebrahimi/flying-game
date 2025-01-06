@@ -16,4 +16,8 @@ export class StartPageComponent {
   chooseSkin(): void {
     this.router.navigate(['/skin-selection']); // Navigate to the skin selection page
   }
+
+  viewLeaderboard(): void {
+    this.router.navigate(['/leaderboard']);
+  }
 }
