@@ -25,6 +25,6 @@ export class LeaderboardComponent implements OnInit {
   }
 
   goToStartPage(): void {
-    this.router.navigate(['/']); // Navigate back to the start page
+    this.router.navigate(['/home']); // Navigate back to the start page
   }
 }

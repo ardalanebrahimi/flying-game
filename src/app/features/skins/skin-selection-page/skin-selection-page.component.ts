@@ -41,6 +41,6 @@ export class SkinSelectionPageComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/']); // Navigate back to the start page
+    this.router.navigate(['/home']); // Navigate back to the start page
   }
 }
