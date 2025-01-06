@@ -20,4 +20,8 @@ export class StartPageComponent {
   viewLeaderboard(): void {
     this.router.navigate(['/leaderboard']);
   }
+
+  editProfile(): void {
+    this.router.navigate(['/profile']); // Navigate to the profile setup page
+  }
 }

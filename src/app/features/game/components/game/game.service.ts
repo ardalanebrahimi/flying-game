@@ -6,6 +6,7 @@ import { ObstacleService } from '../obstacle/obstacle.service';
 import { DotService } from '../dot/dot.service';
 import { Stage } from '../../../../core/models/stage.model';
 import { LeaderboardService } from '../../../../core/services/leaderboard.service';
+import { MockedBackendService } from '../../../../core/services/mocked-backend.service';
 
 @Injectable({
   providedIn: 'root',
@@ -31,7 +32,8 @@ export class GameService {
     public stageService: StageService,
     public obstacleService: ObstacleService,
     public dotService: DotService,
-    private leaderboardService: LeaderboardService
+    private leaderboardService: LeaderboardService,
+    private mockedBackendService: MockedBackendService
   ) {}
 
   startGameLoop(): void {
@@ -96,20 +98,25 @@ export class GameService {
     this.updateBackground();
 
     // Check for collisions
-    if (this.checkCollisions()) {
-      this.triggerExplosion();
-      this.endGame();
-    }
+    if (this.checkCollisions()) this.triggerExplosion();
   }
 
-  endGame(): void {
-    const playerName = prompt('Enter your name:');
+  saveScore(): void {
+    const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+    const { name, uuid } = profile;
     const score = this.state.score;
-    if (playerName) {
-      this.leaderboardService.addEntry({ playerName, score }).then(() => {
-        alert('Score submitted!');
-      });
+
+    if (!name || !uuid) {
+      console.error('User profile is missing!');
+      return;
     }
+
+    const scoreData = { playerName: name, score };
+
+    this.mockedBackendService
+      .addScore(scoreData)
+      .then(() => console.log('Score saved successfully:', scoreData))
+      .catch((error) => console.error('Failed to save score:', error));
   }
 
   private transitBackgroundColor(currentStage: Stage) {
@@ -149,6 +156,7 @@ export class GameService {
     this.physics.reset(); // Stop motion
     this.explosionX = this.state.playerX * (window.innerWidth / 100); // Rocket's X position on screen
     this.explosionY = window.innerHeight - this.rocketVisualPosition; // Rocket's Y position on screen
+    this.saveScore();
   }
 
   resetGame(): void {
