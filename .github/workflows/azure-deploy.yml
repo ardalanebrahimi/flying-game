@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: flying-game-server # Replace with your app name
+  AZURE_WEBAPP_NAME: flying-game-server-cwakemhfg5fheuev # Your Azure Web App name
   AZURE_WEBAPP_PACKAGE_PATH: "./server" # Set this to the path to your web app project
   NODE_VERSION: "20.x" # Set this to the node version to use
 
