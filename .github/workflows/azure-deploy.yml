@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: flying-game-server # Your Azure Web App name
+  AZURE_WEBAPP_NAME: flying-game-server-cwakemhfg5fheuev # Your Azure Web App name
   AZURE_WEBAPP_PACKAGE_PATH: "./server" # Set this to the path to your web app project
   NODE_VERSION: "20.x" # Set this to the node version to use
 
@@ -37,7 +37,10 @@ jobs:
         run: |
           mkdir deploy
           cp -r dist package.json package-lock.json web.config deploy/
+          cp .env.example deploy/.env || true  # Copy environment file if it exists
           cd deploy
+          # Create a server.js file to ensure Azure knows this is a Node.js app
+          echo "require('./dist/index.js');" > server.js
           zip -r ../deploy.zip .
           cd ..
           echo "Deployment package contents:"
@@ -48,10 +51,9 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: List Azure WebApps
+      - name: Configure App Settings
         run: |
-          echo "Available Web Apps:"
-          az webapp list --query "[].{name:name, resourceGroup:resourceGroup}" -o table
+          az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group flying-game-rg --settings PORT=8080 DB_PATH="D:\\home\\site\\wwwroot\\db.sqlite" WEBSITE_NODE_DEFAULT_VERSION=~20
 
       - name: "Deploy to Azure WebApp"
         uses: azure/webapps-deploy@v2
@@ -59,7 +61,7 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREWEBAPP_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/deploy.zip
-          slot-name: production
+          startup-command: "npm start"
 
       - name: Logout from Azure
         run: |
