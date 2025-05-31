@@ -39,12 +39,10 @@ jobs:
           # Copy all necessary files
           cp -r dist node_modules package.json package-lock.json web.config server.js deploy/
           cd deploy
-          # Create startup scripts and environment file
+          # Create IISNode.yml for Windows deployment
+          echo "nodeProcessCommandLine: \"D:\\Program Files\\nodejs\\20.10.0\\node.exe\"" > iisnode.yml
           echo "PORT=8080" > .env
-          echo "DB_PATH=D:\\home\\site\\wwwroot\\db.sqlite" >> .env
-          echo "WEBSITE_NODE_DEFAULT_VERSION=~20" >> .env
-          # Create a startup command file
-          echo "npm install && npm start" > startup.txt
+          echo "DB_PATH=%HOME%\\site\\wwwroot\\db.sqlite" >> .env
           zip -r ../deploy.zip .
           cd ..
           echo "Deployment package contents:"
@@ -61,7 +59,6 @@ jobs:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREWEBAPP_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/deploy.zip
-          startup-command: "node server.js"
 
       - name: Logout from Azure
         run: |
