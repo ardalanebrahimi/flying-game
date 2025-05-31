@@ -37,10 +37,12 @@ jobs:
         run: |
           mkdir deploy
           cp -r dist package.json package-lock.json web.config deploy/
-          cp .env.example deploy/.env || true  # Copy environment file if it exists
           cd deploy
           # Create a server.js file to ensure Azure knows this is a Node.js app
           echo "require('./dist/index.js');" > server.js
+          # Create a .env file with necessary settings
+          echo "PORT=8080" > .env
+          echo "DB_PATH=D:\\home\\site\\wwwroot\\db.sqlite" >> .env
           zip -r ../deploy.zip .
           cd ..
           echo "Deployment package contents:"
@@ -51,17 +53,12 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Configure App Settings
-        run: |
-          az webapp config appsettings set --name ${{ env.AZURE_WEBAPP_NAME }} --resource-group flying-game-rg --settings PORT=8080 DB_PATH="D:\\home\\site\\wwwroot\\db.sqlite" WEBSITE_NODE_DEFAULT_VERSION=~20
-
       - name: "Deploy to Azure WebApp"
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREWEBAPP_PUBLISHPROFILE }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/deploy.zip
-          startup-command: "npm start"
 
       - name: Logout from Azure
         run: |
