@@ -56,9 +56,10 @@ jobs:
       - name: "Deploy to Azure WebApp"
         uses: azure/webapps-deploy@v2
         with:
-          app-name: flying-game-server
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREWEBAPP_PUBLISHPROFILE }}
-          package: ./server/deploy.zip
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/deploy.zip
+          slot-name: production
 
       - name: Logout from Azure
         run: |
