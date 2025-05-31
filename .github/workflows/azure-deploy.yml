@@ -26,9 +26,30 @@ jobs:
           npm install
           npm run build
 
+      - name: Package for deployment
+        working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        run: |
+          mkdir deploy
+          cp -r dist package.json package-lock.json web.config deploy/
+          cd deploy
+          zip -r ../deploy.zip .
+          cd ..
+          echo "Deployment package contents:"
+          unzip -l deploy.zip
+
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
       - name: "Deploy to Azure WebApp"
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           publish-profile: ${{ secrets.AZUREWEBAPP_PUBLISHPROFILE }}
-          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}/deploy.zip
+
+      - name: Logout from Azure
+        run: |
+          az logout
+        if: always()
