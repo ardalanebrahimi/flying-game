@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MockedBackendService } from '../../core/services/mocked-backend.service';
+import { BackendService } from '../../core/services/backend.service';
 
 @Component({
   selector: 'app-user-profile-page',
@@ -13,10 +13,7 @@ import { MockedBackendService } from '../../core/services/mocked-backend.service
 export class UserProfilePageComponent {
   userName: string = '';
 
-  constructor(
-    private router: Router,
-    private mockedBackendService: MockedBackendService
-  ) {
+  constructor(private router: Router, private backendService: BackendService) {
     const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
     this.userName = profile.name;
   }
@@ -31,7 +28,7 @@ export class UserProfilePageComponent {
     const profile = { name: this.userName.trim(), uuid };
     localStorage.setItem('userProfile', JSON.stringify(profile));
 
-    this.mockedBackendService
+    this.backendService
       .saveUserProfile(uuid, this.userName.trim())
       .then(() => {
         console.log('Profile saved successfully:', profile);

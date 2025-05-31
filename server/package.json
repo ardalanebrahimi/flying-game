@@ -1,0 +1,40 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "explore-db": "ts-node src/db-explorer.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@types/body-parser": "^1.19.5",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.28",
+    "@types/sqlite3": "^3.1.11",
+    "@types/swagger-ui-express": "^4.1.8",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.2",
+    "class-validator-jsonschema": "^5.0.2",
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "reflect-metadata": "^0.2.2",
+    "routing-controllers": "^0.11.2",
+    "routing-controllers-openapi": "^5.0.0",
+    "sqlite3": "^5.1.7",
+    "swagger-ui-express": "^5.0.1",
+    "typedi": "^0.10.0",
+    "typeorm": "^0.3.24",
+    "typeorm-typedi-extensions": "^0.4.1",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "ts-node-dev": "^2.0.0"
+  }
+}

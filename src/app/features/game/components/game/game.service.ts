@@ -6,7 +6,7 @@ import { ObstacleService } from '../obstacle/obstacle.service';
 import { DotService } from '../dot/dot.service';
 import { Stage } from '../../../../core/models/stage.model';
 import { LeaderboardService } from '../../../../core/services/leaderboard.service';
-import { MockedBackendService } from '../../../../core/services/mocked-backend.service';
+import { BackendService } from '../../../../core/services/backend.service';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +33,7 @@ export class GameService {
     public obstacleService: ObstacleService,
     public dotService: DotService,
     private leaderboardService: LeaderboardService,
-    private mockedBackendService: MockedBackendService
+    private backendService: BackendService
   ) {}
 
   startGameLoop(): void {
@@ -113,7 +113,7 @@ export class GameService {
 
     const scoreData = { playerName: name, score };
 
-    this.mockedBackendService
+    this.backendService
       .addScore(scoreData)
       .then(() => console.log('Score saved successfully:', scoreData))
       .catch((error) => console.error('Failed to save score:', error));
