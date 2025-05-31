@@ -12,6 +12,7 @@ import { Container } from 'typedi';
 import { LeaderboardController } from './controllers/leaderboard.controller';
 import { UserController } from './controllers/user.controller';
 import { initializeDatabase } from './config/database';
+import { environment } from './config/environment';
 
 // Set up dependency injection containers
 routingUseContainer(Container);
@@ -24,7 +25,10 @@ async function startServer() {
 
     // Routing configuration
     const routingControllersOptions = {
-      cors: true,
+      cors: {
+        origin: environment.corsOrigin,
+        credentials: true,
+      },
       controllers: [LeaderboardController, UserController],
       validation: true,
       routePrefix: '/api',
@@ -38,20 +42,16 @@ async function startServer() {
     const storage = getMetadataArgsStorage();
     const schemas = validationMetadatasToSchemas();
 
-    const spec = routingControllersToSpec(
-      storage,
-      routingControllersOptions,
-      {
-        components: {
-          schemas,
-        },
-        info: {
-          title: 'Game API',
-          version: '1.0.0',
-          description: 'API for managing game leaderboard and user profiles',
-        },
-      }
-    );
+    const spec = routingControllersToSpec(storage, routingControllersOptions, {
+      components: {
+        schemas,
+      },
+      info: {
+        title: 'Game API',
+        version: '1.0.0',
+        description: 'API for managing game leaderboard and user profiles',
+      },
+    });
 
     // Serve Swagger UI
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));

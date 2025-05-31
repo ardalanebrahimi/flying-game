@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { LeaderboardEntry } from '../models/leaderboard-entry.model';
 import { firstValueFrom } from 'rxjs';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BackendService {
-  private apiUrl = 'http://localhost:3000/api'; // Adjust this to match your server URL
+  private apiUrl = environment.apiUrl; // Use environment configuration
 
   constructor(private http: HttpClient) {}
 
