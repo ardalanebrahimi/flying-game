@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: flying-game-server # Your Azure Web App name
+  AZURE_WEBAPP_NAME: flying-game-server-cwakemhfg5fheuev # Your Azure Web App name
   AZURE_WEBAPP_PACKAGE_PATH: "./server" # Set this to the path to your web app project
   NODE_VERSION: "20.x" # Set this to the node version to use
 
@@ -20,12 +20,6 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Debug Info
-        run: |
-          echo "App Name: ${{ env.AZURE_WEBAPP_NAME }}"
-          echo "Node Version: ${{ env.NODE_VERSION }}"
-          echo "Package Path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
-
       - name: npm install and build
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         run: |
@@ -36,13 +30,21 @@ jobs:
         working-directory: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
         run: |
           mkdir deploy
-          # Copy all necessary files
+          # Copy all necessary files for the server
           cp -r dist node_modules package.json package-lock.json web.config server.js deploy/
           cd deploy
           # Create IISNode.yml for Windows deployment
           echo "nodeProcessCommandLine: \"D:\\Program Files\\nodejs\\20.10.0\\node.exe\"" > iisnode.yml
+          # Create environment file with necessary settings
           echo "PORT=8080" > .env
           echo "DB_PATH=%HOME%\\site\\wwwroot\\db.sqlite" >> .env
+          echo "NODE_ENV=production" >> .env
+          echo "WEBSITE_NODE_DEFAULT_VERSION=~20" >> .env
+          # Enable logging
+          mkdir -p ../../../LogFiles/nodejs
+          # Create an empty database file
+          touch db.sqlite
+          # Bundle everything up
           zip -r ../deploy.zip .
           cd ..
           echo "Deployment package contents:"
