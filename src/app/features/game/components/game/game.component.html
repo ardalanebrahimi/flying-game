@@ -56,10 +56,29 @@
 
   <app-player></app-player>
   <app-hud></app-hud>
-  <div
-    class="touch-zone"
-    (touchstart)="onTouchStart($event)"
-    (touchmove)="onTouchMove($event)"
-    (touchend)="onTouchEnd($event)"
-  ></div>
+  <div class="thrust-control" [style.--player-x]="gameService.state.playerX">
+    <button
+      class="thrust-btn"
+      [class.active]="isThrusting"
+      (touchstart)="onThrustStart($event)"
+      (touchmove)="onThrustMove($event)"
+      (touchend)="onThrustEnd()"
+      (mousedown)="onThrustStart($event)"
+      (mousemove)="onThrustMove($event)"
+      (mouseup)="onThrustEnd()"
+      (mouseleave)="onThrustEnd()"
+    >
+      <div class="arrow-left">←</div>
+      <div class="rocket-icon">▲</div>
+      <div class="arrow-right">→</div>
+    </button>
+  </div>
+
+  <div class="tutorial-overlay" *ngIf="showTutorial">
+    <div class="tutorial-content">
+      <p>Touch and hold the button to fly up</p>
+      <p>Drag left or right to move sideways</p>
+      <button (click)="dismissTutorial()">Got it!</button>
+    </div>
+  </div>
 </div>

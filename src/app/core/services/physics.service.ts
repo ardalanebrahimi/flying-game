@@ -18,31 +18,31 @@ export class PhysicsService {
 
   isFlying = false;
 
-  applyThrust(): void {
-    this.startFlying(); // Set flying state
-    this.velocity = Math.min(
-      this.velocity + this.thrust,
-      this.maxUpwardVelocity
-    ); // Apply thrust and cap upward velocity
+  setVelocity(value: number): void {
+    this.velocity = Math.max(
+      Math.min(value, this.maxUpwardVelocity),
+      this.maxDownwardVelocity
+    ); // Set velocity within bounds
   }
 
+  applyThrust(): void {
+    if (!this.isFlying) {
+      this.startFlying();
+    }
+    const thrustMultiplier = 1 / 20; // For 50ms update interval
+    this.setVelocity(this.velocity + this.thrust * thrustMultiplier * 60);
+  }
   applyGravity(): void {
     if (this.isFlying) {
-      this.velocity = Math.min(
-        this.velocity + this.thrust,
-        this.maxUpwardVelocity
-      ); // Apply thrust while flying
-    } else if (this.gravity === 0) {
-      this.handleZeroGravityDeceleration(); // Decelerate in zero-gravity stages
+      this.applyThrust();
     } else {
-      this.handleGravityWithAirResistance(); // Apply gravity and air resistance
+      // Apply gravity when not flying
+      if (this.gravity === 0) {
+        this.handleZeroGravityDeceleration();
+      } else {
+        this.handleGravityWithAirResistance();
+      }
     }
-
-    // Ensure velocity remains within defined limits
-    this.velocity = Math.max(
-      Math.min(this.velocity, this.maxUpwardVelocity),
-      this.maxDownwardVelocity
-    );
   }
 
   getVelocity(): number {
@@ -90,7 +90,7 @@ export class PhysicsService {
 
   private handleZeroGravityDeceleration(): void {
     if (this.velocity > 0) {
-      this.velocity += this.deceleration; // Decelerate upward motion
+      this.setVelocity(this.velocity + this.deceleration); // Decelerate upward motion
       if (this.velocity < 0) {
         this.velocity = 0; // Stop at 0 in zero gravity
       }
@@ -98,10 +98,16 @@ export class PhysicsService {
   }
 
   private handleGravityWithAirResistance(): void {
-    this.velocity += this.gravity; // Apply gravity
+    // Apply gravity first
+    this.setVelocity(this.velocity + this.gravity);
 
+    // Then apply air resistance if moving upward
     if (this.velocity > 0) {
-      this.velocity += this.deceleration; // Apply air resistance to upward motion
+      const airResistance = Math.min(
+        this.velocity * 0.1,
+        Math.abs(this.deceleration)
+      );
+      this.setVelocity(this.velocity - airResistance);
     }
   }
 }

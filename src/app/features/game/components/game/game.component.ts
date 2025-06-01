@@ -24,10 +24,15 @@ import { Router } from '@angular/router';
   ],
 })
 export class GameComponent implements OnInit, OnDestroy {
-  private isTouchNearRocket = false; // Track if the touch starts near the rocket
-  private readonly touchThreshold = 10; // Threshold for detecting proximity (in percentage)
+  private lastTouchX: number | null = null;
+  private moveInterval: any;
   isPaused = false;
-  showConfirmation = false; // Track confirmation dialog visibility
+  showConfirmation = false;
+  showTutorial = true;
+  private isPointerDown = false;
+  private readonly touchThreshold = 5; // pixels threshold for movement
+  isThrusting = false;
+  private lastX: number | null = null;
 
   constructor(public gameService: GameService, private router: Router) {}
 
@@ -36,12 +41,158 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.gameService.stopGameLoop(); // Stop game loop
+    this.gameService.stopGameLoop();
+    this.clearMoveInterval();
+  }
+
+  private clearMoveInterval(): void {
+    if (this.moveInterval) {
+      clearInterval(this.moveInterval);
+      this.moveInterval = null;
+    }
+  }
+
+  @HostListener('mousedown', ['$event'])
+  onMouseDown(): void {
+    if (this.gameService.state.exploded) {
+      this.resetGame();
+      return;
+    }
+    this.isPointerDown = true;
+    this.gameService.applyThrust();
+  }
+
+  @HostListener('mouseup', ['$event'])
+  onMouseUp(): void {
+    this.isPointerDown = false;
+    this.gameService.physics.stopFlying();
+  }
+
+  @HostListener('mousemove', ['$event'])
+  onMouseMove(event: MouseEvent): void {
+    if (!this.isPointerDown) return;
+
+    const screenWidth = window.innerWidth;
+    const movement = (event.movementX / screenWidth) * 100;
+    if (Math.abs(movement) > this.touchThreshold) {
+      this.gameService.state.playerX = Math.max(
+        0,
+        Math.min(100, this.gameService.state.playerX + movement)
+      );
+    }
+  }
+
+  // Movement control methods
+  startMovingLeft(): void {
+    if (this.gameService.state.exploded || this.isPaused) return;
+    this.clearMoveInterval();
+    this.moveInterval = setInterval(() => {
+      this.gameService.moveLeft();
+    }, 50);
+  }
+
+  startMovingRight(): void {
+    if (this.gameService.state.exploded || this.isPaused) return;
+    this.clearMoveInterval();
+    this.moveInterval = setInterval(() => {
+      this.gameService.moveRight();
+    }, 50);
+  }
+
+  stopMoving(): void {
+    this.clearMoveInterval();
+  }
+
+  onTouchStart(event: TouchEvent): void {
+    if (this.gameService.state.exploded) {
+      this.resetGame();
+      return;
+    }
+
+    const touch = event.touches[0];
+    this.lastTouchX = touch.clientX;
+    this.isPointerDown = true;
+    this.gameService.applyThrust();
+  }
+
+  onTouchMove(event: TouchEvent): void {
+    if (!this.isPointerDown || !this.lastTouchX) return;
+
+    const touch = event.touches[0];
+    const deltaX = touch.clientX - this.lastTouchX;
+    const screenWidth = window.innerWidth;
+    const movement = (deltaX / screenWidth) * 100;
+
+    if (Math.abs(movement) > this.touchThreshold) {
+      this.gameService.state.playerX = Math.max(
+        0,
+        Math.min(100, this.gameService.state.playerX + movement)
+      );
+    }
+
+    this.lastTouchX = touch.clientX;
+  }
+
+  onTouchEnd(): void {
+    this.isPointerDown = false;
+    this.lastTouchX = null;
+    this.gameService.physics.stopFlying();
+  }
+
+  onThrustStart(event: TouchEvent | MouseEvent): void {
+    if (this.gameService.state.exploded) {
+      this.resetGame();
+      return;
+    }
+
+    this.isThrusting = true;
+    this.gameService.applyThrust();
+
+    // Store initial position
+    if (event instanceof TouchEvent) {
+      this.lastX = event.touches[0].clientX;
+    } else {
+      this.lastX = event.clientX;
+    }
+  }
+
+  onThrustMove(event: TouchEvent | MouseEvent): void {
+    if (!this.isThrusting || !this.lastX) return;
+
+    let currentX: number;
+    if (event instanceof TouchEvent) {
+      currentX = event.touches[0].clientX;
+    } else {
+      currentX = event.clientX;
+    }
+
+    // Calculate movement
+    const deltaX = currentX - this.lastX;
+    const screenWidth = window.innerWidth;
+    const movement = (deltaX / screenWidth) * 100;
+
+    // Move rocket
+    if (Math.abs(movement) > 1) {
+      this.gameService.state.playerX = Math.max(
+        0,
+        Math.min(100, this.gameService.state.playerX + movement)
+      );
+      this.lastX = currentX;
+    }
+  }
+
+  onThrustEnd(): void {
+    this.isThrusting = false;
+    this.lastX = null;
+    this.gameService.physics.stopFlying();
   }
 
   resetGame(): void {
     this.isPaused = false;
+    this.isThrusting = false;
+    this.lastX = null;
     this.gameService.restartGame();
+    this.showTutorial = true;
   }
 
   navigateToStart(): void {
@@ -66,67 +217,6 @@ export class GameComponent implements OnInit, OnDestroy {
   confirmHomeNavigation(): void {
     this.showConfirmation = false;
     this.navigateToStart();
-  }
-
-  onTouchMove(event: TouchEvent): void {
-    if (this.gameService.state.exploded || this.isPaused) return;
-    if (!this.isTouchNearRocket) {
-      return; // Ignore touch movements that didn't start near the rocket
-    }
-
-    const touchX = event.touches[0].clientX; // Get touch X position
-    const screenWidth = window.innerWidth;
-    const playerX = (touchX / screenWidth) * 100; // Convert to percentage
-
-    // Update rocket position and clamp it within bounds
-    this.gameService.state.playerX = Math.max(0, Math.min(100, playerX));
-  }
-
-  @HostListener('mousedown', ['$event'])
-  onMouseDown(): void {
-    this.gameService.applyThrust(); // Trigger thrust through GameService
-  }
-
-  @HostListener('mouseup', ['$event'])
-  onMouseUp(): void {
-    this.gameService.physics.stopFlying(); // Stop thrust by resetting velocity
-  }
-
-  @HostListener('touchstart', ['$event'])
-  onTouchStart(event: TouchEvent): void {
-    if (this.gameService.state.exploded || this.isPaused) return;
-    this.gameService.applyThrust(); // Trigger thrust through GameService
-    const touchX = event.touches[0].clientX; // Get touch X position
-    const screenWidth = window.innerWidth;
-    const touchPercentage = (touchX / screenWidth) * 100; // Convert to percentage
-
-    // Check if touch is near the rocket
-    const rocketX = this.gameService.state.playerX;
-    this.isTouchNearRocket =
-      Math.abs(touchPercentage - rocketX) <= this.touchThreshold;
-
-    // If the touch is near the rocket, allow movement
-    if (this.isTouchNearRocket) {
-      this.gameService.state.playerX = Math.max(
-        0,
-        Math.min(100, touchPercentage)
-      );
-    }
-  }
-
-  @HostListener('touchend', ['$event'])
-  onTouchEnd(event: TouchEvent): void {
-    this.gameService.physics.stopFlying(); // Stop thrust by resetting velocity
-  }
-
-  @HostListener('document:keydown', ['$event'])
-  onKeyDown(event: KeyboardEvent): void {
-    if (event.key === 'ArrowLeft' || event.key.toLowerCase() === 'a') {
-      this.gameService.moveLeft();
-    }
-    if (event.key === 'ArrowRight' || event.key.toLowerCase() === 'd') {
-      this.gameService.moveRight();
-    }
   }
 
   get playerY() {
@@ -159,5 +249,9 @@ export class GameComponent implements OnInit, OnDestroy {
   resumeGame(): void {
     this.isPaused = false;
     this.gameService.startGameLoop();
+  }
+
+  dismissTutorial(): void {
+    this.showTutorial = false;
   }
 }
