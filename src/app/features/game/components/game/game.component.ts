@@ -27,6 +27,7 @@ export class GameComponent implements OnInit {
   private isTouchNearRocket = false; // Track if the touch starts near the rocket
   private readonly touchThreshold = 10; // Threshold for detecting proximity (in percentage)
   isPaused = false;
+  showConfirmation = false; // Track confirmation dialog visibility
 
   constructor(public gameService: GameService, private router: Router) {}
 
@@ -160,5 +161,18 @@ export class GameComponent implements OnInit {
     this.gameService.resetGame(); // Reset game state
     this.stopGameLoop();
     this.router.navigate(['/home']);
+  }
+
+  showHomeConfirmation(): void {
+    this.showConfirmation = true;
+  }
+
+  cancelHomeNavigation(): void {
+    this.showConfirmation = false;
+  }
+
+  confirmHomeNavigation(): void {
+    this.showConfirmation = false;
+    this.navigateToStart();
   }
 }

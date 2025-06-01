@@ -2,13 +2,34 @@
   class="game-container"
   [style.background-color]="gameService.currentBackgroundColor"
 >
-  <button class="pause-button" (click)="togglePause()" *ngIf="!isPaused">
-    ⏸︎
-  </button>
-  <div class="pause-menu" *ngIf="isPaused">
-    <button (click)="resumeGame()">Resume</button>
-    <button (click)="resetGame()">Reset</button>
-    <button (click)="navigateToStart()">Home</button>
+  <div class="top-right-controls">
+    <img
+      src="/images/home.png"
+      alt="Home"
+      class="action-icon"
+      (click)="showHomeConfirmation()"
+    />
+    <img
+      src="/images/reset.png"
+      alt="Reset"
+      class="action-icon"
+      (click)="resetGame()"
+    />
+  </div>
+
+  <div class="confirmation-dialog" *ngIf="showConfirmation">
+    <div class="dialog-content">
+      <h2>Return to Home?</h2>
+      <p>
+        Are you sure you want to leave the game? Your progress will be lost.
+      </p>
+      <div class="dialog-buttons">
+        <button (click)="cancelHomeNavigation()">Cancel</button>
+        <button class="confirm-button" (click)="confirmHomeNavigation()">
+          Yes, Leave Game
+        </button>
+      </div>
+    </div>
   </div>
 
   <app-dot></app-dot>
