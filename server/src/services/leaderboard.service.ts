@@ -4,20 +4,23 @@ import { LeaderboardEntry } from '../models/leaderboard-entry';
 
 @Service()
 export class LeaderboardService {
-    constructor(
-        @Inject('typeorm.repository.LeaderboardEntry')
-        private repository: Repository<LeaderboardEntry>
-    ) {}
+  constructor(
+    @Inject('typeorm.repository.LeaderboardEntry')
+    private repository: Repository<LeaderboardEntry>
+  ) {}
 
-    async getAll(): Promise<LeaderboardEntry[]> {
-        return this.repository.find({
-            order: {
-                score: 'DESC'
-            }
-        });
-    }
+  async getAll(): Promise<LeaderboardEntry[]> {
+    const query = this.repository
+      .createQueryBuilder('entry')
+      .select('entry.playerName', 'playerName')
+      .addSelect('MAX(entry.score)', 'score')
+      .groupBy('entry.playerName')
+      .orderBy('score', 'DESC');
 
-    async addScore(entry: LeaderboardEntry): Promise<void> {
-        await this.repository.save(entry);
-    }
+    return query.getRawMany();
+  }
+
+  async addScore(entry: LeaderboardEntry): Promise<void> {
+    await this.repository.save(entry);
+  }
 }

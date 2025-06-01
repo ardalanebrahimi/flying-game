@@ -19,7 +19,7 @@ export class LeaderboardController {
   @Get('/')
   @OpenAPI({
     summary: 'Get the leaderboard',
-    description: 'Returns all leaderboard entries sorted by score',
+    description: 'Returns the highest score for each player, sorted by score',
   })
   async getLeaderboard(): Promise<LeaderboardEntry[]> {
     return this.leaderboardService.getAll();
