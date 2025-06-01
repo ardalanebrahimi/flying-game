@@ -29,7 +29,7 @@ export const OBSTACLE_CONFIG: Record<string, StageObstacleConfig> = {
         type: 'ice',
         imagePool: ['/obstacles/ice.png'],
         sizeRange: [30, 50],
-        speedRange: [2, 5],
+        speedRange: [2, 4], // Slightly reduced max speed
       },
     ],
     spawnRateRange: [600, 1500],
@@ -40,7 +40,7 @@ export const OBSTACLE_CONFIG: Record<string, StageObstacleConfig> = {
         type: 'ice',
         imagePool: ['/obstacles/ice.png'],
         sizeRange: [25, 45],
-        speedRange: [3, 7],
+        speedRange: [2, 5], // Reduced speed range
       },
       {
         type: 'planet',
@@ -57,7 +57,7 @@ export const OBSTACLE_CONFIG: Record<string, StageObstacleConfig> = {
         type: 'planet',
         imagePool: ['/obstacles/earth.png', '/obstacles/moon.png'],
         sizeRange: [35, 55],
-        speedRange: [4, 8],
+        speedRange: [3, 6], // Reduced speed range
       },
     ],
     spawnRateRange: [400, 1000],
@@ -77,13 +77,13 @@ export const OBSTACLE_CONFIG: Record<string, StageObstacleConfig> = {
           '/obstacles/grassplanet.png',
         ],
         sizeRange: [30, 50],
-        speedRange: [5, 10],
+        speedRange: [3, 7], // Significantly reduced speed range
       },
       {
         type: 'star',
         imagePool: ['/obstacles/star.png'],
         sizeRange: [20, 30],
-        speedRange: [8, 12],
+        speedRange: [4, 8], // Significantly reduced speed range
       },
     ],
     spawnRateRange: [300, 800],
@@ -102,17 +102,17 @@ export const OBSTACLE_CONFIG: Record<string, StageObstacleConfig> = {
           '/obstacles/uranus.png',
           '/obstacles/grassplanet.png',
         ],
-        sizeRange: [25, 45],
-        speedRange: [7, 12],
+        sizeRange: [30, 45],
+        speedRange: [4, 8], // Significantly reduced from [7, 12]
       },
       {
         type: 'star',
         imagePool: ['/obstacles/star.png'],
-        sizeRange: [15, 25],
-        speedRange: [10, 15],
+        sizeRange: [20, 30],
+        speedRange: [5, 9], // Significantly reduced from [10, 15]
       },
     ],
-    spawnRateRange: [200, 600],
+    spawnRateRange: [300, 800], // Increased minimum delay
   },
   'Infinite Space': {
     types: [
@@ -128,16 +128,16 @@ export const OBSTACLE_CONFIG: Record<string, StageObstacleConfig> = {
           '/obstacles/uranus.png',
           '/obstacles/grassplanet.png',
         ],
-        sizeRange: [20, 40],
-        speedRange: [10, 15],
+        sizeRange: [25, 40],
+        speedRange: [5, 9], // Significantly reduced from [10, 15]
       },
       {
         type: 'star',
         imagePool: ['/obstacles/star.png'],
-        sizeRange: [10, 20],
-        speedRange: [12, 18],
+        sizeRange: [15, 25],
+        speedRange: [6, 10], // Significantly reduced from [12, 18]
       },
     ],
-    spawnRateRange: [150, 500],
+    spawnRateRange: [250, 700], // Increased delays
   },
 };

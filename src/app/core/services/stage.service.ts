@@ -49,16 +49,16 @@ export class StageService {
     {
       name: 'Deep Space',
       gravity: 0,
-      maxSpeed: 150,
-      deceleration: -0.1,
+      maxSpeed: 120, // Reduced from 150
+      deceleration: -0.15, // Slightly more control
       background: 'linear-gradient(to bottom, #1a1a1a, #3a3a3a)',
       heightRange: [5000, 10000],
     },
     {
       name: 'Infinite Space',
       gravity: 0,
-      maxSpeed: 200,
-      deceleration: -0.05,
+      maxSpeed: 150, // Reduced from 200
+      deceleration: -0.1, // Increased from -0.05 for better control
       background: 'linear-gradient(to bottom, #3a3a3a, #000000)',
       heightRange: [10000, Infinity],
     },
@@ -82,22 +82,23 @@ export class StageService {
     // Create a dynamic stage that scales difficulty with height
     const dynamicStage: Stage = { ...stage };
 
-    // Increase maxSpeed based on height within the stage
+    // Reduce the speed increase within stages
     const heightProgress =
       (height - stage.heightRange[0]) /
       (stage.heightRange[1] - stage.heightRange[0]);
-    const speedIncrease = heightProgress * (stage.maxSpeed * 0.5); // Up to 50% faster within stage
+    const speedIncrease = heightProgress * (stage.maxSpeed * 0.3); // Reduced from 0.5 (30% increase instead of 50%)
     dynamicStage.maxSpeed += speedIncrease;
 
-    // For infinite space, continue increasing difficulty
+    // Make Infinite Space progression more manageable
     if (stage.name === 'Infinite Space') {
       const extraHeight = Math.max(0, height - 10000);
-      const extraSpeedBoost = Math.min(extraHeight / 1000, 100); // Add up to 100 more speed
+      const extraSpeedBoost = Math.min(extraHeight / 2000, 50); // Halved speed increase and max boost
       dynamicStage.maxSpeed += extraSpeedBoost;
+      // Keep deceleration more stable for better control
       dynamicStage.deceleration = Math.max(
-        -0.01,
-        stage.deceleration - extraHeight / 50000
-      ); // Gradually reduce deceleration
+        -0.08,
+        stage.deceleration - extraHeight / 100000
+      );
     }
 
     if (dynamicStage && dynamicStage !== this.currentStage) {

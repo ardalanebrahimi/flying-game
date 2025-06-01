@@ -43,9 +43,12 @@ export class ObstacleService {
         const config = OBSTACLE_CONFIG[currentStage];
 
         if (config) {
-          // Make spawn rate decrease more gradually
+          // Even more gradual spawn rate adjustment
           const baseDelay = this.getRandomNumber(config.spawnRateRange);
-          const heightFactor = Math.max(0.7, 1 - this.currentHeight / 50000); // More gradual decrease to 70% of base delay
+          const heightFactor = Math.max(
+            0.75,
+            1 - Math.log(1 + this.currentHeight / 15000) * 0.3
+          ); // More gradual decrease with minimum 75% delay
           delay = baseDelay * heightFactor;
 
           this.spawnObstacle(currentStage);
@@ -72,11 +75,9 @@ export class ObstacleService {
     const typeConfig = this.getRandomElement(config.types);
     const image = this.getRandomElement(typeConfig.imagePool || []);
     const size =
-      typeConfig.size || this.getRandomNumber(typeConfig.sizeRange || [50, 50]);
-
-    // Make speed increase more gradually
+      typeConfig.size || this.getRandomNumber(typeConfig.sizeRange || [50, 50]); // Scale speed based on height with a gentler logarithmic curve
     const baseSpeed = this.getRandomNumber(typeConfig.speedRange);
-    const heightMultiplier = 1 + this.currentHeight / 20000; // Slower speed increase
+    const heightMultiplier = 1 + Math.log(1 + this.currentHeight / 7000) * 0.25; // Even gentler speed progression
     const speed = baseSpeed * heightMultiplier;
 
     const obstacle: Obstacle = {
@@ -84,8 +85,8 @@ export class ObstacleService {
       y: 0,
       type: typeConfig.type,
       image,
-      // Make size decrease more gradually and keep a larger minimum size
-      size: Math.max(20, size * Math.pow(0.95, this.currentHeight / 10000)),
+      // Keep objects slightly larger and decrease size even more gradually
+      size: Math.max(25, size * Math.pow(0.97, this.currentHeight / 12000)),
       speed,
     };
 
