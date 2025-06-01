@@ -53,15 +53,14 @@ async function startServer() {
       },
     });
 
-    // Serve Swagger UI
+    // Serve Swagger UI at /api-docs
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(spec));
 
-    const port = 3000;
+    const port = environment.port || 3000;
     app.listen(port, () => {
-      console.log(`Server is running on http://localhost:${port}`);
-      console.log(
-        `Swagger documentation available at http://localhost:${port}/api-docs`
-      );
+      console.log(`Server is running on port ${port}`);
+      console.log(`API base URL: /api`);
+      console.log(`Swagger documentation: /api-docs`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
