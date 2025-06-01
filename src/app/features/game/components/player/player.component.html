@@ -2,6 +2,7 @@
   class="player"
   [style.left.%]="gameService.state.playerX"
   [style.bottom.px]="gameService.rocketVisualPosition"
+  [class.invincible]="gameService.state.isInvincible"
 >
   <img [src]="skinImage" alt="Player Skin" />
 </div>

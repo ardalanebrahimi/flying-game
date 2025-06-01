@@ -1,3 +1,18 @@
 <div class="score">Score: {{ gameService.state.score }}</div>
 <div class="speed">Speed: {{ rocketSpeedKmh }} km/h</div>
 <div class="stage">Stage: {{ gameService.state.currentStage }}</div>
+<div class="lives">
+  <img
+    *ngFor="let i of [1, 2, 3]"
+    [src]="
+      i <= gameService.state.lives
+        ? '/images/heart-filled.png'
+        : '/images/heart.png'
+    "
+    [alt]="i <= gameService.state.lives ? 'Life remaining' : 'Life lost'"
+    class="heart-icon"
+  />
+</div>
+<div *ngIf="gameService.state.countdownTimer > 0" class="countdown">
+  {{ gameService.state.countdownTimer }}
+</div>

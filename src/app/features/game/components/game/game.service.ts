@@ -19,6 +19,11 @@ export class GameService {
     playerX: 50, // Horizontal position (percentage of screen width)
     exploded: false,
     currentStage: '',
+    lives: 3,
+    isInvincible: false,
+    invincibilityTimer: 0,
+    countdownTimer: 0,
+    isRecovering: false,
   };
 
   explosionX?: number;
@@ -55,28 +60,30 @@ export class GameService {
     }
   }
   applyThrust(): void {
-    if (this.state.exploded) return; // Prevent movement if exploded
+    if (this.state.exploded || this.state.isRecovering) return; // Prevent movement if exploded or recovering
     this.physics.applyThrust(); // Delegate thrust logic to PhysicsService
   }
-
   moveLeft(): void {
-    if (this.state.exploded) return;
+    if (this.state.exploded || this.state.isRecovering) return;
     this.state.playerX -= 2;
     if (this.state.playerX < 0) this.state.playerX = 0; // Prevent moving out of bounds (left)
   }
 
   moveRight(): void {
-    if (this.state.exploded) return;
+    if (this.state.exploded || this.state.isRecovering) return;
     this.state.playerX += 2;
     if (this.state.playerX > 100) this.state.playerX = 100; // Prevent moving out of bounds (right)
   }
-
   updateGame(): void {
-    if (this.state.exploded) return;
+    if (this.state.exploded || this.state.isRecovering) return;
 
     const HEIGHT_SCALE = 0.2; // Scale height progression
     this.physics.applyGravity(); // Apply physics calculations
     this.state.playerY += this.physics.getVelocity() * HEIGHT_SCALE; // Update vertical position
+
+    if (this.state.invincibilityTimer > 0) {
+      this.state.invincibilityTimer -= 50; // Decrease timer (50ms is our update interval)
+    }
 
     // Prevent falling below ground
     if (this.state.playerY < 0) {
@@ -154,15 +161,44 @@ export class GameService {
     const screenHeight = window.innerHeight;
     return Math.min(this.state.playerY, screenHeight / 3);
   }
-
   triggerExplosion(): void {
-    this.state.exploded = true;
-    this.physics.reset(); // Stop motion
-    this.explosionX = this.state.playerX * (window.innerWidth / 100); // Rocket's X position on screen
-    this.explosionY = window.innerHeight - this.rocketVisualPosition; // Rocket's Y position on screen
-    this.saveScore();
-  }
+    this.state.lives--;
+    this.explosionX = this.state.playerX * (window.innerWidth / 100);
+    this.explosionY = window.innerHeight - this.rocketVisualPosition;
 
+    if (this.state.lives <= 0) {
+      this.state.exploded = true;
+      this.physics.reset();
+      this.saveScore();
+    } else {
+      this.startInvincibilityPeriod();
+    }
+  }
+  private startInvincibilityPeriod(): void {
+    this.state.isInvincible = true;
+    this.state.invincibilityTimer = 3000; // 3 seconds of invincibility
+    this.state.countdownTimer = 3;
+    this.state.isRecovering = true;
+
+    // Stop all physics
+    this.physics.reset();
+
+    // Start countdown
+    const countdownInterval = setInterval(() => {
+      this.state.countdownTimer--;
+      if (this.state.countdownTimer <= 0) {
+        clearInterval(countdownInterval);
+        // Resume the game
+        this.state.isRecovering = false;
+      }
+    }, 1000);
+
+    // Remove invincibility after timer
+    setTimeout(() => {
+      this.state.isInvincible = false;
+      this.state.invincibilityTimer = 0;
+    }, this.state.invincibilityTimer);
+  }
   resetGame(): void {
     this.state = {
       score: 0,
@@ -170,12 +206,18 @@ export class GameService {
       playerX: 50,
       exploded: false,
       currentStage: '',
+      lives: 3,
+      isInvincible: false,
+      invincibilityTimer: 0,
+      countdownTimer: 0,
+      isRecovering: false,
     };
     this.physics.reset();
     this.obstacleService.clearObstacles();
   }
-
   checkCollisions(): boolean {
+    if (this.state.isInvincible) return false;
+
     const rocketX = this.state.playerX * (window.innerWidth / 100); // Rocket's X position
     const rocketY = window.innerHeight - this.rocketVisualPosition - 25; // Rocket's Center Y on screen
 

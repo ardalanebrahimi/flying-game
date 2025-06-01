@@ -19,3 +19,60 @@
 .stage {
   top: 70px;
 }
+
+.lives {
+  position: absolute;
+  top: 10px;
+  right: 60px; /* Moved further to the left to avoid pause button */
+  display: flex;
+  gap: 5px;
+  z-index: 11; /* Make sure it's above regular content but below pause menu */
+}
+
+.heart-icon {
+  width: 25px;
+  height: 25px;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+  margin-top: 2px; /* Align vertically with pause button */
+}
+
+.countdown {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 72px;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+  animation: pulse 1s infinite;
+  z-index: 1000;
+}
+
+@keyframes pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Add blinking effect for invincibility */
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+:host-context(.player-invincible) .player {
+  animation: blink 0.5s infinite;
+}
