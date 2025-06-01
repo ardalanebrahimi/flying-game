@@ -2,7 +2,9 @@ name: Deploy to Azure
 on:
   push:
     branches: [master]
-  workflow_dispatch:
+    paths:
+      - "server/**" # Only trigger when changes are made in the server directory
+  workflow_dispatch: # Keep manual trigger option
 
 env:
   AZURE_WEBAPP_NAME: flying-game-server # Your Azure Web App name
