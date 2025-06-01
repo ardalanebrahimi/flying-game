@@ -50,7 +50,7 @@ export class GameService {
   initializeGame(): void {
     this.state = {
       playerX: 50,
-      playerY: 128,
+      playerY: 0, // Start at 0 to align score and visual position
       score: 0,
       lives: 3,
       currentStage: 'Earth Surface',
@@ -142,7 +142,7 @@ export class GameService {
     // Reset game state
     this.state = {
       score: 0,
-      playerY: 128,
+      playerY: 0,
       playerX: 50,
       exploded: false,
       currentStage: '',
@@ -316,9 +316,11 @@ export class GameService {
   get rocketVisualPosition(): number {
     const screenHeight = window.innerHeight;
     const minPosition = 128; // Minimum height to stay above controls
+
+    // Ensure the player starts moving up visually from the beginning
     return Math.max(
       minPosition,
-      Math.min(this.state.playerY, screenHeight / 3)
+      Math.min(this.state.playerY + minPosition, screenHeight / 3)
     );
   }
 
