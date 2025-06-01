@@ -20,6 +20,65 @@
   top: 70px;
 }
 
+// Vertical progress bar styling
+.vertical-progress-container {
+  position: fixed;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+}
+
+.vertical-progress-bar {
+  width: 12px;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  position: relative;
+  overflow: visible;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+.progress-fill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(to top, #4caf50, #8bc34a);
+  transition: height 0.3s ease-out;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+}
+
+.player-position {
+  position: absolute;
+  left: -14px;
+  transform: translateY(50%);
+  transition: bottom 0.3s ease-out;
+  img {
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    animation: hover 2s ease-in-out infinite;
+    opacity: 0.7;
+  }
+}
+
+@keyframes hover {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
 .lives {
   position: absolute;
   top: 10px;
@@ -76,4 +135,28 @@
 
 :host-context(.player-invincible) .player {
   animation: blink 0.5s infinite;
+}
+
+.finish-icon {
+  position: relative;
+  margin-bottom: -5px;
+  z-index: 11;
+
+  img {
+    width: 32px;
+    height: 32px;
+    opacity: 0.8;
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+    animation: glow 2s ease-in-out infinite;
+  }
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.3));
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+  }
 }

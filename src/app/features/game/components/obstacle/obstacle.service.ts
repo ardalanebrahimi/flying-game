@@ -16,6 +16,8 @@ export class ObstacleService {
     velocityCallback: () => number,
     heightCallback: () => number
   ): void {
+    this.stopObstacleLifecycle(); // Ensure clean start
+    this.currentHeight = 0; // Reset height tracking
     this.startObstacleMovement(velocityCallback);
     this.startObstacleSpawner(stageCallback, velocityCallback, heightCallback);
   }
@@ -23,9 +25,11 @@ export class ObstacleService {
   stopObstacleLifecycle(): void {
     if (this.obstacleMovementInterval) {
       clearInterval(this.obstacleMovementInterval);
+      this.obstacleMovementInterval = null;
     }
     if (this.obstacleSpawnerTimeout) {
       clearTimeout(this.obstacleSpawnerTimeout);
+      this.obstacleSpawnerTimeout = null;
     }
   }
 
@@ -102,6 +106,7 @@ export class ObstacleService {
 
   clearObstacles(): void {
     this.obstacles = [];
+    this.currentHeight = 0;
   }
 
   private getRandomElement<T>(array: T[]): T {

@@ -12,11 +12,13 @@ import { BackendService } from '../../../../core/services/backend.service';
   providedIn: 'root',
 })
 export class GameService {
+  private static readonly INITIAL_TARGET_HEIGHT = 100000;
   private gameInterval: any;
+
   state: GameState = {
     score: 0,
-    playerY: 0, // Vertical position
-    playerX: 50, // Horizontal position (percentage of screen width)
+    playerY: 0,
+    playerX: 50,
     exploded: false,
     currentStage: '',
     lives: 3,
@@ -24,6 +26,8 @@ export class GameService {
     invincibilityTimer: 0,
     countdownTimer: 0,
     isRecovering: false,
+    hasWon: false,
+    targetHeight: GameService.INITIAL_TARGET_HEIGHT,
   };
 
   explosionX?: number;
@@ -40,17 +44,37 @@ export class GameService {
     private leaderboardService: LeaderboardService,
     private backendService: BackendService
   ) {}
+
+  // Game Lifecycle Management
+  initializeGame(): void {
+    // Reset everything to initial state
+    this.resetGameState();
+    // Start the game
+    this.startGameLoop();
+  }
+
   startGameLoop(): void {
-    this.stopGameLoop(); // Ensure no duplicate intervals
+    // Ensure clean state before starting
+    this.stopGameLoop();
+
+    // Initialize stage and physics for current height
+    const currentStage = this.stageService.getStageForHeight(
+      this.state.playerY
+    );
+    this.transitBackgroundColor(currentStage);
+    this.physics.gravity = currentStage.gravity;
+    this.physics.maxUpwardVelocity = currentStage.maxSpeed;
+    this.physics.deceleration = currentStage.deceleration || -1; // Start game systems
     this.obstacleService.startObstacleLifecycle(
       () => this.state.currentStage,
       () => this.physics.getVelocity(),
       () => this.state.playerY
     );
+    this.dotService.startDotSpawner();
     this.gameInterval = setInterval(() => {
-      this.updateGame(); // Update player-related logic
-      this.dotService.updateDots(); // Update dots
-    }, 50); // Fixed interval (adjustable as needed)
+      this.updateGame();
+      this.dotService.updateDots();
+    }, 50);
   }
 
   stopGameLoop(): void {
@@ -58,7 +82,72 @@ export class GameService {
       clearInterval(this.gameInterval);
       this.gameInterval = null;
     }
+    this.obstacleService.stopObstacleLifecycle();
+    this.dotService.stopDotSpawner();
   }
+
+  resetGameState(): void {
+    // Stop all active systems
+    this.stopGameLoop();
+
+    // Reset physics
+    this.physics.reset();
+
+    // Reset game state
+    this.state = {
+      score: 0,
+      playerY: 0,
+      playerX: 50,
+      exploded: false,
+      currentStage: '',
+      lives: 3,
+      isInvincible: false,
+      invincibilityTimer: 0,
+      countdownTimer: 0,
+      isRecovering: false,
+      hasWon: false,
+      targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+    };
+
+    // Clear obstacles
+    this.obstacleService.clearObstacles();
+
+    // Reset visual elements
+    this.backgroundPositionY = 0;
+    this.currentBackgroundColor = '#87ceeb';
+    this.explosionX = undefined;
+    this.explosionY = undefined;
+    this.dots = [];
+  }
+
+  restartGame(): void {
+    this.resetGameState();
+    this.startGameLoop();
+  }
+
+  handleGameOver(): void {
+    this.stopGameLoop();
+    this.saveScore();
+  }
+
+  private handleWin(): void {
+    this.state.hasWon = true;
+    this.handleGameOver();
+  }
+
+  triggerExplosion(): void {
+    this.state.lives--;
+    this.explosionX = this.state.playerX * (window.innerWidth / 100);
+    this.explosionY = window.innerHeight - this.rocketVisualPosition;
+
+    if (this.state.lives <= 0) {
+      this.state.exploded = true;
+      this.handleGameOver();
+    } else {
+      this.startInvincibilityPeriod();
+    }
+  }
+
   applyThrust(): void {
     if (this.state.exploded || this.state.isRecovering) return; // Prevent movement if exploded or recovering
     this.physics.applyThrust(); // Delegate thrust logic to PhysicsService
@@ -75,11 +164,18 @@ export class GameService {
     if (this.state.playerX > 100) this.state.playerX = 100; // Prevent moving out of bounds (right)
   }
   updateGame(): void {
-    if (this.state.exploded || this.state.isRecovering) return;
+    if (this.state.exploded || this.state.isRecovering || this.state.hasWon)
+      return;
 
     const HEIGHT_SCALE = 0.2; // Scale height progression
     this.physics.applyGravity(); // Apply physics calculations
     this.state.playerY += this.physics.getVelocity() * HEIGHT_SCALE; // Update vertical position
+
+    // Check for win condition
+    if (this.state.playerY >= this.state.targetHeight) {
+      this.handleWin();
+      return;
+    }
 
     if (this.state.invincibilityTimer > 0) {
       this.state.invincibilityTimer -= 50; // Decrease timer (50ms is our update interval)
@@ -161,19 +257,7 @@ export class GameService {
     const screenHeight = window.innerHeight;
     return Math.min(this.state.playerY, screenHeight / 3);
   }
-  triggerExplosion(): void {
-    this.state.lives--;
-    this.explosionX = this.state.playerX * (window.innerWidth / 100);
-    this.explosionY = window.innerHeight - this.rocketVisualPosition;
 
-    if (this.state.lives <= 0) {
-      this.state.exploded = true;
-      this.physics.reset();
-      this.saveScore();
-    } else {
-      this.startInvincibilityPeriod();
-    }
-  }
   private startInvincibilityPeriod(): void {
     this.state.isInvincible = true;
     this.state.invincibilityTimer = 3000; // 3 seconds of invincibility
@@ -200,6 +284,13 @@ export class GameService {
     }, this.state.invincibilityTimer);
   }
   resetGame(): void {
+    // Stop any existing game loops
+    this.stopGameLoop();
+
+    // Reset physics first
+    this.physics.reset();
+
+    // Reset game state to initial values
     this.state = {
       score: 0,
       playerY: 0,
@@ -211,10 +302,25 @@ export class GameService {
       invincibilityTimer: 0,
       countdownTimer: 0,
       isRecovering: false,
+      hasWon: false,
+      targetHeight: GameService.INITIAL_TARGET_HEIGHT,
     };
-    this.physics.reset();
+
+    // Clear all obstacles
     this.obstacleService.clearObstacles();
+
+    // Reset background position
+    this.backgroundPositionY = 0;
+    this.currentBackgroundColor = '#87ceeb';
+
+    // Update current stage and physics properties
+    const currentStage = this.stageService.getStageForHeight(0);
+    this.transitBackgroundColor(currentStage);
+    this.physics.gravity = currentStage.gravity;
+    this.physics.maxUpwardVelocity = currentStage.maxSpeed;
+    this.physics.deceleration = currentStage.deceleration || -1;
   }
+
   checkCollisions(): boolean {
     if (this.state.isInvincible) return false;
 

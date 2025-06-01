@@ -1,4 +1,4 @@
-<div class="score">Score: {{ gameService.state.score }}</div>
+<div class="score">Score: {{ gameService.state.score | number }}</div>
 <div class="speed">Speed: {{ rocketSpeedKmh }} km/h</div>
 <div class="stage">Stage: {{ gameService.state.currentStage }}</div>
 <div class="lives">
@@ -15,4 +15,17 @@
 </div>
 <div *ngIf="gameService.state.countdownTimer > 0" class="countdown">
   {{ gameService.state.countdownTimer }}
+</div>
+
+<!-- Vertical progress bar with player indicator -->
+<div class="vertical-progress-container">
+  <div class="finish-icon">
+    <img src="/obstacles/sun.png" alt="Finish line" />
+  </div>
+  <div class="vertical-progress-bar">
+    <div class="progress-fill" [style.height.%]="heightProgress"></div>
+    <div class="player-position" [style.bottom.%]="heightProgress">
+      <img [src]="playerSkinImage" alt="Player position" />
+    </div>
+  </div>
 </div>

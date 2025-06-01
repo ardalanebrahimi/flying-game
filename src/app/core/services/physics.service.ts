@@ -2,12 +2,19 @@ import { Injectable } from '@angular/core';
 
 @Injectable({ providedIn: 'root' })
 export class PhysicsService {
-  velocity = 0; // Vertical velocity
-  gravity = -2; // Gravity force
-  thrust = 10; // Rocket thrust force per input
-  maxUpwardVelocity = 400; // Maximum upward speed
-  maxDownwardVelocity = -200; // Maximum downward speed
-  deceleration = -1; // Deceleration factor to reduce velocity when not flying
+  // Initial values as static constants
+  private static readonly INITIAL_GRAVITY = -2;
+  private static readonly INITIAL_THRUST = 10;
+  private static readonly INITIAL_MAX_UPWARD_VELOCITY = 400;
+  private static readonly INITIAL_MAX_DOWNWARD_VELOCITY = -200;
+  private static readonly INITIAL_DECELERATION = -1;
+
+  velocity = 0;
+  gravity = PhysicsService.INITIAL_GRAVITY;
+  thrust = PhysicsService.INITIAL_THRUST;
+  maxUpwardVelocity = PhysicsService.INITIAL_MAX_UPWARD_VELOCITY;
+  maxDownwardVelocity = PhysicsService.INITIAL_MAX_DOWNWARD_VELOCITY;
+  deceleration = PhysicsService.INITIAL_DECELERATION;
 
   isFlying = false;
 
@@ -51,8 +58,14 @@ export class PhysicsService {
   }
 
   reset(): void {
-    this.velocity = 0; // Reset velocity
-    this.isFlying = false; // Reset flying state
+    // Reset all values to initial state
+    this.velocity = 0;
+    this.gravity = PhysicsService.INITIAL_GRAVITY;
+    this.thrust = PhysicsService.INITIAL_THRUST;
+    this.maxUpwardVelocity = PhysicsService.INITIAL_MAX_UPWARD_VELOCITY;
+    this.maxDownwardVelocity = PhysicsService.INITIAL_MAX_DOWNWARD_VELOCITY;
+    this.deceleration = PhysicsService.INITIAL_DECELERATION;
+    this.isFlying = false;
   }
 
   setGravity(value: number): void {

@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlayerComponent } from '../player/player.component';
 import { ObstacleComponent } from '../obstacle/obstacle.component';
@@ -23,7 +23,7 @@ import { Router } from '@angular/router';
     ExplosionComponent,
   ],
 })
-export class GameComponent implements OnInit {
+export class GameComponent implements OnInit, OnDestroy {
   private isTouchNearRocket = false; // Track if the touch starts near the rocket
   private readonly touchThreshold = 10; // Threshold for detecting proximity (in percentage)
   isPaused = false;
@@ -32,29 +32,40 @@ export class GameComponent implements OnInit {
   constructor(public gameService: GameService, private router: Router) {}
 
   ngOnInit(): void {
-    this.startGameLoop();
-  }
-
-  private startGameLoop() {
-    this.gameService.startGameLoop(); // Main game loop
-
-    this.gameService.obstacleService.startObstacleLifecycle(
-      () => this.gameService.state.currentStage, // Pass stage dynamically
-      () => this.gameService.physics.getVelocity(),
-      () => this.gameService.state.playerY
-    );
-    this.gameService.dotService.startDotSpawner();
-  }
-
-  private stopGameLoop() {
-    this.gameService.stopGameLoop(); // Stop the game loop
-    this.gameService.obstacleService.stopObstacleLifecycle(); // Stop obstacles
-    this.gameService.dotService.stopDotSpawner();
+    this.gameService.initializeGame();
   }
 
   ngOnDestroy(): void {
     this.gameService.stopGameLoop(); // Stop game loop
-    this.gameService.obstacleService.stopObstacleLifecycle(); // Stop obstacles
+  }
+
+  resetGame(): void {
+    this.isPaused = false;
+    this.gameService.restartGame();
+  }
+
+  navigateToStart(): void {
+    this.gameService.stopGameLoop();
+    this.router.navigate(['/home']);
+  }
+
+  showHomeConfirmation(): void {
+    this.showConfirmation = true;
+    this.isPaused = true;
+    this.gameService.stopGameLoop();
+  }
+
+  cancelHomeNavigation(): void {
+    this.showConfirmation = false;
+    this.isPaused = false;
+    if (!this.gameService.state.exploded && !this.gameService.state.hasWon) {
+      this.gameService.startGameLoop();
+    }
+  }
+
+  confirmHomeNavigation(): void {
+    this.showConfirmation = false;
+    this.navigateToStart();
   }
 
   onTouchMove(event: TouchEvent): void {
@@ -141,38 +152,12 @@ export class GameComponent implements OnInit {
   togglePause(): void {
     this.isPaused = !this.isPaused;
     if (this.isPaused) {
-      this.stopGameLoop();
+      this.gameService.stopGameLoop();
     }
   }
 
   resumeGame(): void {
     this.isPaused = false;
-    this.startGameLoop();
-  }
-
-  resetGame(): void {
-    this.isPaused = false;
-    this.gameService.resetGame();
-    this.startGameLoop();
-  }
-
-  navigateToStart(): void {
-    this.isPaused = false;
-    this.gameService.resetGame(); // Reset game state
-    this.stopGameLoop();
-    this.router.navigate(['/home']);
-  }
-
-  showHomeConfirmation(): void {
-    this.showConfirmation = true;
-  }
-
-  cancelHomeNavigation(): void {
-    this.showConfirmation = false;
-  }
-
-  confirmHomeNavigation(): void {
-    this.showConfirmation = false;
-    this.navigateToStart();
+    this.gameService.startGameLoop();
   }
 }

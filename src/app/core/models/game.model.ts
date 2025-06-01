@@ -9,4 +9,6 @@ export interface GameState {
   invincibilityTimer: number;
   countdownTimer: number;
   isRecovering: boolean;
+  hasWon: boolean;
+  targetHeight: number;
 }

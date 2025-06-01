@@ -32,6 +32,22 @@
     </div>
   </div>
 
+  <div class="confirmation-dialog" *ngIf="gameService.state.hasWon">
+    <div class="dialog-content">
+      <h2>Congratulations!</h2>
+      <p>
+        You've reached the target height of
+        {{ gameService.state.targetHeight | number }} units! Your final score is
+        {{ gameService.state.score | number }}.
+      </p>
+      <div class="dialog-buttons">
+        <button class="confirm-button" (click)="navigateToStart()">
+          Return to Home
+        </button>
+      </div>
+    </div>
+  </div>
+
   <app-dot></app-dot>
   <app-obstacle></app-obstacle>
   <app-explosion></app-explosion>
