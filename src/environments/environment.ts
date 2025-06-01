@@ -1,4 +1,5 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000/api',
+  apiUrl:
+    'https://flying-game-server-cwakemhfg5fheuev.germanywestcentral-01.azurewebsites.net/api',
 };
