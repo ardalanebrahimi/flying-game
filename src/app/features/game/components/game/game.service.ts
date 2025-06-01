@@ -50,7 +50,7 @@ export class GameService {
   initializeGame(): void {
     this.state = {
       playerX: 50,
-      playerY: 150,
+      playerY: 128,
       score: 0,
       lives: 3,
       currentStage: 'Earth Surface',
@@ -142,7 +142,7 @@ export class GameService {
     // Reset game state
     this.state = {
       score: 0,
-      playerY: 0,
+      playerY: 128,
       playerX: 50,
       exploded: false,
       currentStage: '',
@@ -313,10 +313,9 @@ export class GameService {
       'background-position-y': `${this.backgroundPositionY}px`,
     };
   }
-
   get rocketVisualPosition(): number {
     const screenHeight = window.innerHeight;
-    const minPosition = 150; // Keep rocket higher from bottom
+    const minPosition = 128; // Minimum height to stay above controls
     return Math.max(
       minPosition,
       Math.min(this.state.playerY, screenHeight / 3)
@@ -358,7 +357,7 @@ export class GameService {
     // Reset game state to initial values
     this.state = {
       score: 0,
-      playerY: 0,
+      playerY: 128,
       playerX: 50,
       exploded: false,
       currentStage: '',
