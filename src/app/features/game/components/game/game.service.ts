@@ -35,9 +35,13 @@ export class GameService {
     private leaderboardService: LeaderboardService,
     private backendService: BackendService
   ) {}
-
   startGameLoop(): void {
     this.stopGameLoop(); // Ensure no duplicate intervals
+    this.obstacleService.startObstacleLifecycle(
+      () => this.state.currentStage,
+      () => this.physics.getVelocity(),
+      () => this.state.playerY
+    );
     this.gameInterval = setInterval(() => {
       this.updateGame(); // Update player-related logic
       this.dotService.updateDots(); // Update dots

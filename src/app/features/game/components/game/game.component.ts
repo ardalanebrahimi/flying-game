@@ -39,7 +39,8 @@ export class GameComponent implements OnInit {
 
     this.gameService.obstacleService.startObstacleLifecycle(
       () => this.gameService.state.currentStage, // Pass stage dynamically
-      () => this.gameService.physics.getVelocity()
+      () => this.gameService.physics.getVelocity(),
+      () => this.gameService.state.playerY
     );
     this.gameService.dotService.startDotSpawner();
   }

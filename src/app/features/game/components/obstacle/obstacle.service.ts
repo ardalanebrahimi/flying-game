@@ -9,13 +9,15 @@ export class ObstacleService {
   obstacles: Obstacle[] = [];
   private obstacleMovementInterval: any;
   private obstacleSpawnerTimeout: any;
+  private currentHeight = 0;
 
   startObstacleLifecycle(
     stageCallback: () => string,
-    velocityCallback: () => number
+    velocityCallback: () => number,
+    heightCallback: () => number
   ): void {
     this.startObstacleMovement(velocityCallback);
-    this.startObstacleSpawner(stageCallback, velocityCallback);
+    this.startObstacleSpawner(stageCallback, velocityCallback, heightCallback);
   }
 
   stopObstacleLifecycle(): void {
@@ -29,18 +31,27 @@ export class ObstacleService {
 
   private startObstacleSpawner(
     stageCallback: () => string,
-    velocityCallback: () => number
+    velocityCallback: () => number,
+    heightCallback: () => number
   ): void {
     const spawnObstacleInterval = () => {
-      let delay = 1000; // Default 1-second delay
+      let delay = 1000; // Default delay
+
       if (velocityCallback() !== 0) {
         const currentStage = stageCallback();
+        this.currentHeight = heightCallback();
         const config = OBSTACLE_CONFIG[currentStage];
-        if (!config) return;
 
-        const delay = this.getRandomNumber(config.spawnRateRange);
-        this.spawnObstacle(currentStage);
+        if (config) {
+          // Make spawn rate decrease more gradually
+          const baseDelay = this.getRandomNumber(config.spawnRateRange);
+          const heightFactor = Math.max(0.7, 1 - this.currentHeight / 50000); // More gradual decrease to 70% of base delay
+          delay = baseDelay * heightFactor;
+
+          this.spawnObstacle(currentStage);
+        }
       }
+
       this.obstacleSpawnerTimeout = setTimeout(spawnObstacleInterval, delay);
     };
 
@@ -52,7 +63,7 @@ export class ObstacleService {
       if (velocityCallback() !== 0) {
         this.moveObstacles();
       }
-    }, 50); // Adjust movement speed
+    }, 50);
   }
   private spawnObstacle(stage: string): void {
     const config = OBSTACLE_CONFIG[stage];
@@ -62,18 +73,34 @@ export class ObstacleService {
     const image = this.getRandomElement(typeConfig.imagePool || []);
     const size =
       typeConfig.size || this.getRandomNumber(typeConfig.sizeRange || [50, 50]);
-    const speed = this.getRandomNumber(typeConfig.speedRange);
+
+    // Make speed increase more gradually
+    const baseSpeed = this.getRandomNumber(typeConfig.speedRange);
+    const heightMultiplier = 1 + this.currentHeight / 20000; // Slower speed increase
+    const speed = baseSpeed * heightMultiplier;
 
     const obstacle: Obstacle = {
       x: Math.random() * window.innerWidth,
       y: 0,
       type: typeConfig.type,
       image,
-      size,
+      // Make size decrease more gradually and keep a larger minimum size
+      size: Math.max(20, size * Math.pow(0.95, this.currentHeight / 10000)),
       speed,
     };
 
     this.obstacles.push(obstacle);
+  }
+
+  moveObstacles(): void {
+    this.obstacles = this.obstacles.filter((obstacle) => {
+      obstacle.y += obstacle.speed;
+      return obstacle.y <= window.innerHeight;
+    });
+  }
+
+  clearObstacles(): void {
+    this.obstacles = [];
   }
 
   private getRandomElement<T>(array: T[]): T {
@@ -81,41 +108,6 @@ export class ObstacleService {
   }
 
   private getRandomNumber(range: [number, number]): number {
-    const [min, max] = range;
-    return Math.random() * (max - min) + min;
-  }
-
-  moveObstacles(): void {
-    this.obstacles = this.obstacles.map((obstacle) => ({
-      ...obstacle,
-      y: obstacle.y + obstacle.speed, // Use obstacle's individual speed
-    }));
-
-    // Remove obstacles that move off-screen
-    this.obstacles = this.obstacles.filter(
-      (obstacle) => obstacle.y < window.innerHeight + 100
-    );
-  }
-
-  clearObstacles(): void {
-    this.obstacles = [];
-  }
-
-  private createObstacle(
-    x: number,
-    y: number,
-    type: string,
-    image: string,
-    size: number,
-    speed: number
-  ): Obstacle {
-    return {
-      x,
-      y,
-      type,
-      image,
-      size,
-      speed,
-    };
+    return range[0] + Math.random() * (range[1] - range[0]);
   }
 }
