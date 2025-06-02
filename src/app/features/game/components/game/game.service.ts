@@ -29,6 +29,7 @@ export class GameService {
     isRecovering: false,
     hasWon: false,
     targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+    isButtonPressed: false,
   };
 
   explosionX?: number;
@@ -61,6 +62,7 @@ export class GameService {
       hasWon: false,
       countdownTimer: 3,
       targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+      isButtonPressed: false,
     };
 
     this.resetVisuals();
@@ -76,7 +78,6 @@ export class GameService {
     this.explosionY = undefined;
     this.dots = [];
   }
-
   private startCountdown(): void {
     // Clear any existing countdown
     if (this.countdownInterval) {
@@ -89,12 +90,12 @@ export class GameService {
         this.state.countdownTimer--;
         if (this.state.countdownTimer === 0) {
           clearInterval(this.countdownInterval);
+          this.state.isRecovering = false; // Clear recovery state before starting game loop
           this.startGameLoop();
         }
       }
     }, 1000);
   }
-
   startGameLoop(): void {
     // Stop any existing game loop
     this.stopGameLoop();
@@ -107,6 +108,16 @@ export class GameService {
     this.physics.gravity = currentStage.gravity;
     this.physics.maxUpwardVelocity = currentStage.maxSpeed;
     this.physics.deceleration = currentStage.deceleration || -1;
+
+    // If the button is being held, make sure thrust is applied
+    if (
+      this.state.isButtonPressed &&
+      !this.state.exploded &&
+      !this.state.isRecovering
+    ) {
+      this.physics.setThrust(currentStage.gravity === 0 ? 1.0 : 2.0);
+      this.physics.applyThrust();
+    }
 
     // Start game systems
     this.obstacleService.startObstacleLifecycle(
@@ -153,6 +164,7 @@ export class GameService {
       isRecovering: false,
       hasWon: false,
       targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+      isButtonPressed: false,
     };
 
     // Clear obstacles
@@ -198,7 +210,13 @@ export class GameService {
     }
   }
   applyThrust(): void {
-    if (this.state.exploded || this.state.countdownTimer > 0) return;
+    if (this.state.exploded) return;
+
+    // Always update button state
+    this.state.isButtonPressed = true;
+
+    // Don't apply thrust during countdown
+    if (this.state.countdownTimer > 0) return;
 
     // Get current stage configuration
     const currentStage = this.stageService.getCurrentStage();
@@ -209,6 +227,12 @@ export class GameService {
     this.physics.setThrust(baseThrust);
     this.physics.applyThrust();
   }
+
+  stopThrust(): void {
+    this.state.isButtonPressed = false;
+    this.physics.stopFlying();
+  }
+
   moveLeft(): void {
     if (this.state.exploded || this.state.isRecovering) return;
     const moveSpeed = 3;
@@ -323,30 +347,22 @@ export class GameService {
       Math.min(this.state.playerY + minPosition, screenHeight / 3)
     );
   }
-
   private startInvincibilityPeriod(): void {
     this.state.isInvincible = true;
     this.state.invincibilityTimer = 3000; // 3 seconds of invincibility
-    this.state.countdownTimer = 3;
     this.state.isRecovering = true;
 
-    // Stop all physics
+    // Stop physics but maintain button state
     this.physics.reset();
 
-    // Start countdown
-    const countdownInterval = setInterval(() => {
-      this.state.countdownTimer--;
-      if (this.state.countdownTimer <= 0) {
-        clearInterval(countdownInterval);
-        // Resume the game
-        this.state.isRecovering = false;
-      }
-    }, 1000);
+    // Use the main countdown system which will handle re-applying thrust
+    this.startCountdown();
 
     // Remove invincibility after timer
     setTimeout(() => {
       this.state.isInvincible = false;
       this.state.invincibilityTimer = 0;
+      this.state.isRecovering = false;
     }, this.state.invincibilityTimer);
   }
   resetGame(): void {
@@ -354,9 +370,7 @@ export class GameService {
     this.stopGameLoop();
 
     // Reset physics first
-    this.physics.reset();
-
-    // Reset game state to initial values
+    this.physics.reset(); // Reset game state to initial values
     this.state = {
       score: 0,
       playerY: 128,
@@ -370,6 +384,7 @@ export class GameService {
       isRecovering: false,
       hasWon: false,
       targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+      isButtonPressed: false,
     };
 
     // Clear all obstacles

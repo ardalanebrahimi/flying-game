@@ -24,13 +24,10 @@ import { Router } from '@angular/router';
   ],
 })
 export class GameComponent implements OnInit, OnDestroy {
-  private lastTouchX: number | null = null;
   private moveInterval: any;
   isPaused = false;
   showConfirmation = false;
   showTutorial = true;
-  private isPointerDown = false;
-  private readonly touchThreshold = 5; // pixels threshold for movement
   isThrusting = false;
   private lastX: number | null = null;
 
@@ -51,37 +48,6 @@ export class GameComponent implements OnInit, OnDestroy {
       this.moveInterval = null;
     }
   }
-
-  @HostListener('mousedown', ['$event'])
-  onMouseDown(): void {
-    if (this.gameService.state.exploded) {
-      this.resetGame();
-      return;
-    }
-    this.isPointerDown = true;
-    this.gameService.applyThrust();
-  }
-
-  @HostListener('mouseup', ['$event'])
-  onMouseUp(): void {
-    this.isPointerDown = false;
-    this.gameService.physics.stopFlying();
-  }
-
-  @HostListener('mousemove', ['$event'])
-  onMouseMove(event: MouseEvent): void {
-    if (!this.isPointerDown) return;
-
-    const screenWidth = window.innerWidth;
-    const movement = (event.movementX / screenWidth) * 100;
-    if (Math.abs(movement) > this.touchThreshold) {
-      this.gameService.state.playerX = Math.max(
-        0,
-        Math.min(100, this.gameService.state.playerX + movement)
-      );
-    }
-  }
-
   // Movement control methods
   startMovingLeft(): void {
     if (this.gameService.state.exploded || this.isPaused) return;
@@ -101,42 +67,6 @@ export class GameComponent implements OnInit, OnDestroy {
 
   stopMoving(): void {
     this.clearMoveInterval();
-  }
-
-  onTouchStart(event: TouchEvent): void {
-    if (this.gameService.state.exploded) {
-      this.resetGame();
-      return;
-    }
-
-    const touch = event.touches[0];
-    this.lastTouchX = touch.clientX;
-    this.isPointerDown = true;
-    this.gameService.applyThrust();
-  }
-
-  onTouchMove(event: TouchEvent): void {
-    if (!this.isPointerDown || !this.lastTouchX) return;
-
-    const touch = event.touches[0];
-    const deltaX = touch.clientX - this.lastTouchX;
-    const screenWidth = window.innerWidth;
-    const movement = (deltaX / screenWidth) * 100;
-
-    if (Math.abs(movement) > this.touchThreshold) {
-      this.gameService.state.playerX = Math.max(
-        0,
-        Math.min(100, this.gameService.state.playerX + movement)
-      );
-    }
-
-    this.lastTouchX = touch.clientX;
-  }
-
-  onTouchEnd(): void {
-    this.isPointerDown = false;
-    this.lastTouchX = null;
-    this.gameService.physics.stopFlying();
   }
 
   onThrustStart(event: TouchEvent | MouseEvent): void {
@@ -184,7 +114,7 @@ export class GameComponent implements OnInit, OnDestroy {
   onThrustEnd(): void {
     this.isThrusting = false;
     this.lastX = null;
-    this.gameService.physics.stopFlying();
+    this.gameService.stopThrust();
   }
 
   resetGame(): void {
