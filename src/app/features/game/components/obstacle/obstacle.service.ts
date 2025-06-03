@@ -47,14 +47,24 @@ export class ObstacleService {
         const config = OBSTACLE_CONFIG[currentStage];
 
         if (config) {
-          // Even more gradual spawn rate adjustment
           const baseDelay = this.getRandomNumber(config.spawnRateRange);
-          const heightFactor = Math.max(
-            0.75,
-            1 - Math.log(1 + this.currentHeight / 15000) * 0.3
-          ); // More gradual decrease with minimum 75% delay
-          delay = baseDelay * heightFactor;
+          let heightFactor;
 
+          if (currentStage === 'Infinite Space') {
+            // More aggressive spawn rate in infinite space
+            heightFactor = Math.max(
+              0.6, // Allow for even shorter delays
+              1 - Math.log(1 + this.currentHeight / 12000) * 0.4 // Faster reduction
+            );
+          } else {
+            // Normal spawn rate adjustment for other stages
+            heightFactor = Math.max(
+              0.75,
+              1 - Math.log(1 + this.currentHeight / 15000) * 0.3
+            );
+          }
+
+          delay = baseDelay * heightFactor;
           this.spawnObstacle(currentStage);
         }
       }
@@ -79,18 +89,34 @@ export class ObstacleService {
     const typeConfig = this.getRandomElement(config.types);
     const image = this.getRandomElement(typeConfig.imagePool || []);
     const size =
-      typeConfig.size || this.getRandomNumber(typeConfig.sizeRange || [50, 50]); // Scale speed based on height with a gentler logarithmic curve
+      typeConfig.size || this.getRandomNumber(typeConfig.sizeRange || [50, 50]);
+
+    // Calculate speed multiplier based on height and stage
+    let heightMultiplier;
+    if (stage === 'Infinite Space') {
+      // More aggressive scaling in infinite space
+      heightMultiplier = 1 + Math.log(1 + this.currentHeight / 5000) * 0.4;
+    } else {
+      // Normal scaling for other stages
+      heightMultiplier = 1 + Math.log(1 + this.currentHeight / 7000) * 0.25;
+    }
+
     const baseSpeed = this.getRandomNumber(typeConfig.speedRange);
-    const heightMultiplier = 1 + Math.log(1 + this.currentHeight / 7000) * 0.25; // Even gentler speed progression
     const speed = baseSpeed * heightMultiplier;
+
+    // Keep minimum size larger in infinite space
+    const minSize = stage === 'Infinite Space' ? 30 : 25;
+    const sizeMultiplier =
+      stage === 'Infinite Space'
+        ? Math.pow(0.98, this.currentHeight / 15000) // Slower size reduction
+        : Math.pow(0.97, this.currentHeight / 12000);
 
     const obstacle: Obstacle = {
       x: Math.random() * window.innerWidth,
       y: 0,
       type: typeConfig.type,
       image,
-      // Keep objects slightly larger and decrease size even more gradually
-      size: Math.max(25, size * Math.pow(0.97, this.currentHeight / 12000)),
+      size: Math.max(minSize, size * sizeMultiplier),
       speed,
     };
 
