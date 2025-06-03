@@ -8,6 +8,7 @@ import { ResetButtonComponent } from '../reset-button/reset-button.component';
 import { ExplosionComponent } from '../explosion/explosion.component';
 import { GameService } from './game.service';
 import { Router } from '@angular/router';
+import { HeartComponent } from '../heart/heart.component';
 
 @Component({
   selector: 'app-game',
@@ -21,7 +22,9 @@ import { Router } from '@angular/router';
     HudComponent,
     ResetButtonComponent,
     ExplosionComponent,
+    HeartComponent,
   ],
+  standalone: true,
 })
 export class GameComponent implements OnInit, OnDestroy {
   private moveInterval: any;

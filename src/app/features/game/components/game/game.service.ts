@@ -7,6 +7,7 @@ import { DotService } from '../dot/dot.service';
 import { Stage } from '../../../../core/models/stage.model';
 import { LeaderboardService } from '../../../../core/services/leaderboard.service';
 import { BackendService } from '../../../../core/services/backend.service';
+import { HeartService } from '../heart/heart.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,7 @@ export class GameService {
     public stageService: StageService,
     public obstacleService: ObstacleService,
     public dotService: DotService,
+    public heartService: HeartService,
     private leaderboardService: LeaderboardService,
     private backendService: BackendService
   ) {}
@@ -72,6 +74,7 @@ export class GameService {
   private resetVisuals(): void {
     this.physics.reset();
     this.obstacleService.clearObstacles();
+    this.heartService.clearHearts();
     this.backgroundPositionY = 0;
     this.currentBackgroundColor = '#87ceeb';
     this.explosionX = undefined;
@@ -126,6 +129,11 @@ export class GameService {
       () => this.state.playerY
     );
     this.dotService.startDotSpawner();
+    this.heartService.startHeartLifecycle(
+      () => this.physics.getVelocity(),
+      () => this.state.playerY,
+      () => this.state.lives
+    );
 
     // Start main game loop
     this.gameInterval = setInterval(() => {
@@ -141,6 +149,7 @@ export class GameService {
     }
     this.obstacleService.stopObstacleLifecycle();
     this.dotService.stopDotSpawner();
+    this.heartService.stopHeartLifecycle();
   }
 
   resetGameState(): void {
@@ -176,6 +185,7 @@ export class GameService {
     this.explosionX = undefined;
     this.explosionY = undefined;
     this.dots = [];
+    this.heartService.updateLastSpawnHeight(0); // Reset last spawn height for hearts
   }
 
   restartGame(): void {
@@ -408,6 +418,24 @@ export class GameService {
     const rocketX = this.state.playerX * (window.innerWidth / 100); // Rocket's X position
     const rocketY = window.innerHeight - this.rocketVisualPosition - 25; // Rocket's Center Y on screen
 
+    // Check heart collisions first
+    this.heartService.hearts = this.heartService.hearts.filter((heart) => {
+      const distance = Math.sqrt(
+        Math.pow(rocketX - heart.x, 2) + Math.pow(rocketY - heart.y, 2)
+      );
+      if (distance < 40) {
+        // Same collision radius as obstacles
+        if (this.state.lives < 3) {
+          this.state.lives++;
+          // Update last spawn height to current height when collecting a heart
+          this.heartService.updateLastSpawnHeight(this.state.playerY);
+        }
+        return false; // Remove the heart
+      }
+      return true; // Keep the heart
+    });
+
+    // Check obstacle collisions
     return this.obstacleService.obstacles.some((obstacle) => {
       const distance = Math.sqrt(
         Math.pow(rocketX - obstacle.x, 2) + Math.pow(rocketY - obstacle.y, 2)
