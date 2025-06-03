@@ -4,6 +4,7 @@ import { GameComponent } from './features/game/components/game/game.component';
 import { SkinSelectionPageComponent } from './features/skins/skin-selection-page/skin-selection-page.component';
 import { LeaderboardComponent } from './features/leaderboard/leaderboard.component';
 import { UserProfilePageComponent } from './features/user-profile-page/user-profile-page.component';
+import { profileGuard } from './core/guards/profile.guard';
 
 export const routes: Routes = [
   {
@@ -12,7 +13,11 @@ export const routes: Routes = [
     redirectTo: localStorage.getItem('userProfile') ? 'home' : 'profile',
   },
   { path: 'home', component: StartPageComponent },
-  { path: 'game', component: GameComponent },
+  {
+    path: 'game',
+    component: GameComponent,
+    canActivate: [profileGuard],
+  },
   { path: 'skin-selection', component: SkinSelectionPageComponent },
   { path: 'leaderboard', component: LeaderboardComponent },
   { path: 'profile', component: UserProfilePageComponent },

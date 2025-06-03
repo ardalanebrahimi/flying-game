@@ -37,6 +37,11 @@ export class GameComponent implements OnInit, OnDestroy {
   constructor(public gameService: GameService, private router: Router) {}
 
   ngOnInit(): void {
+    const profile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+    if (!profile.name) {
+      this.router.navigate(['/profile']);
+      return;
+    }
     this.gameService.initializeGame();
   }
 

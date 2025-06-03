@@ -1,8 +1,17 @@
 <div class="start-page">
   <img src="skins/rocket.png" alt="Game Logo" class="game-logo" />
   <h1>Welcome to the Game</h1>
-  <button (click)="startGame()">Start</button>
-  <button (click)="chooseSkin()">Choose Skin</button>
-  <button (click)="viewLeaderboard()">View Leaderboard</button>
-  <button (click)="editProfile()">Profile Settings</button>
+
+  <div *ngIf="showNamePrompt" class="name-prompt">
+    <p>Please enter your name to start:</p>
+    <input type="text" [(ngModel)]="userName" placeholder="Enter your name" />
+    <button (click)="saveName()">Save</button>
+  </div>
+
+  <div *ngIf="!showNamePrompt" class="menu-buttons">
+    <button (click)="startGame()">Start</button>
+    <button (click)="chooseSkin()">Choose Skin</button>
+    <button (click)="viewLeaderboard()">View Leaderboard</button>
+    <button (click)="editProfile()">Profile Settings</button>
+  </div>
 </div>
