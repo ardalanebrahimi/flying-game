@@ -10,6 +10,7 @@ import { ExplosionComponent } from '../explosion/explosion.component';
 import { GameService } from './game.service';
 import { Router } from '@angular/router';
 import { HeartComponent } from '../heart/heart.component';
+import { StageTransitionComponent } from '../stage-transition/stage-transition.component';
 
 @Component({
   selector: 'app-game',
@@ -25,6 +26,7 @@ import { HeartComponent } from '../heart/heart.component';
     ResetButtonComponent,
     ExplosionComponent,
     HeartComponent,
+    StageTransitionComponent,
   ],
   standalone: true,
 })
@@ -36,6 +38,8 @@ export class GameComponent implements OnInit, OnDestroy {
   isThrusting = false;
   private lastX: number | null = null;
   dontShowAgain = false;
+  showStageTransition = false;
+  private currentDisplayedStage = '';
 
   constructor(public gameService: GameService, private router: Router) {}
 
@@ -172,9 +176,19 @@ export class GameComponent implements OnInit, OnDestroy {
   get score() {
     return this.gameService.state.score;
   }
-
   get currentStage(): string {
-    return this.gameService.state.currentStage;
+    const stage = this.gameService.state.currentStage;
+    if (stage !== this.currentDisplayedStage) {
+      // Only show transition if we had a previous stage (not the first stage)
+      if (this.currentDisplayedStage !== '') {
+        this.showStageTransition = true;
+        setTimeout(() => {
+          this.showStageTransition = false;
+        }, 2000); // Match the animation duration
+      }
+      this.currentDisplayedStage = stage;
+    }
+    return stage;
   }
 
   get showGround(): boolean {

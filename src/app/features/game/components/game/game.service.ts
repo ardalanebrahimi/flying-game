@@ -206,11 +206,11 @@ export class GameService {
     this.state.hasWon = true;
     this.handleGameOver();
   }
-
   triggerExplosion(): void {
     this.state.lives--;
     this.explosionX = this.state.playerX * (window.innerWidth / 100);
     this.explosionY = window.innerHeight - this.rocketVisualPosition;
+    this.heartService.updateHealthLossTime();
 
     if (this.state.lives <= 0) {
       this.state.exploded = true;

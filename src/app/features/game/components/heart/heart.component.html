@@ -1,0 +1,10 @@
+<div
+  *ngFor="let heart of heartService.hearts"
+  class="heart"
+  [style.left.px]="heart.x"
+  [style.top.px]="heart.y"
+  [style.width.px]="heart.size"
+  [style.height.px]="heart.size"
+>
+  <img src="/images/heart-filled.png" [alt]="'Heart'" />
+</div>
