@@ -1,5 +1,6 @@
 import { Component, OnInit, HostListener, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { PlayerComponent } from '../player/player.component';
 import { ObstacleComponent } from '../obstacle/obstacle.component';
 import { DotComponent } from '../dot/dot.component';
@@ -16,6 +17,7 @@ import { HeartComponent } from '../heart/heart.component';
   styleUrls: ['./game.component.scss'],
   imports: [
     CommonModule,
+    FormsModule,
     PlayerComponent,
     ObstacleComponent,
     DotComponent,
@@ -30,9 +32,10 @@ export class GameComponent implements OnInit, OnDestroy {
   private moveInterval: any;
   isPaused = false;
   showConfirmation = false;
-  showTutorial = true;
+  showTutorial = localStorage.getItem('hideTutorial') !== 'true';
   isThrusting = false;
   private lastX: number | null = null;
+  dontShowAgain = false;
 
   constructor(public gameService: GameService, private router: Router) {}
 
@@ -42,6 +45,11 @@ export class GameComponent implements OnInit, OnDestroy {
       this.router.navigate(['/profile']);
       return;
     }
+
+    // Check if tutorial should be shown
+    const hideTutorial = localStorage.getItem('hideTutorial') === 'true';
+    this.showTutorial = !hideTutorial;
+
     this.gameService.initializeGame();
   }
 
@@ -124,13 +132,13 @@ export class GameComponent implements OnInit, OnDestroy {
     this.lastX = null;
     this.gameService.stopThrust();
   }
-
   resetGame(): void {
     this.isPaused = false;
     this.isThrusting = false;
     this.lastX = null;
     this.gameService.restartGame();
-    this.showTutorial = true;
+    const hideTutorial = localStorage.getItem('hideTutorial') === 'true';
+    this.showTutorial = !hideTutorial;
   }
 
   navigateToStart(): void {
@@ -191,5 +199,8 @@ export class GameComponent implements OnInit, OnDestroy {
 
   dismissTutorial(): void {
     this.showTutorial = false;
+    if (this.dontShowAgain) {
+      localStorage.setItem('hideTutorial', 'true');
+    }
   }
 }

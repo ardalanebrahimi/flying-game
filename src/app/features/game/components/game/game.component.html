@@ -79,6 +79,12 @@
     <div class="tutorial-content">
       <p>Touch and hold the button to fly up</p>
       <p>Drag left or right to move sideways</p>
+      <div class="checkbox-wrapper">
+        <label class="checkbox-label">
+          <input type="checkbox" [(ngModel)]="dontShowAgain" />
+          <span class="checkbox-text">Don't show this again</span>
+        </label>
+      </div>
       <button (click)="dismissTutorial()">Got it!</button>
     </div>
   </div>

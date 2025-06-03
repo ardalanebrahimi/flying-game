@@ -194,6 +194,33 @@
     line-height: 1.4;
   }
 
+  .checkbox-wrapper {
+    margin: 20px 0;
+    text-align: center;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    gap: 8px;
+
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+      cursor: pointer;
+      accent-color: #4a90e2;
+    }
+
+    .checkbox-text {
+      font-size: 16px;
+      color: #555;
+    }
+  }
+
   button {
     margin-top: 20px;
     padding: 12px 30px;
