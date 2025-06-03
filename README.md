@@ -17,6 +17,20 @@ A fun and engaging game where players control a rocket to navigate through diffe
 - **Dynamic Gameplay**:
   - Speed and difficulty adjust based on the stage.
   - Randomly spawning obstacles.
+  - Collectable hearts for extra lives.
+  - Stage transitions with visual effects.
+- **Player Systems**:
+  - Multiple character skins.
+  - Life system with hearts.
+  - Invincibility period after damage.
+  - Progress tracking.
+- **UI/UX Features**:
+  - Interactive tutorial for new players.
+  - Vertical progress bar.
+  - Stage transition animations.
+  - Score and speed display.
+  - Pause and resume functionality.
+  - Confirmation dialogs.
 - **Explosions**:
   - Collide with obstacles to trigger an explosion effect.
   - Game pauses after collision; players can reset manually.
@@ -29,9 +43,12 @@ A fun and engaging game where players control a rocket to navigate through diffe
   - Use the mouse to click for thrust.
   - Press `ArrowLeft` or `A` to move left.
   - Press `ArrowRight` or `D` to move right.
+  - Click the home icon to return to menu.
+  - Click the reset icon to restart game.
 - **Mobile**:
   - Tap the left or right edges of the screen to move horizontally.
   - Tap anywhere to apply thrust.
+  - Use on-screen buttons for menu and reset.
 
 ---
 
@@ -104,6 +121,41 @@ To build and deploy the app for Android devices:
 4. **Build and Run the App**:
    - In Android Studio, click `Run` to install and run the app on an emulator or connected device.
 
+### Deploying to Play Store
+
+Follow these steps to deploy your app to the Google Play Store's Internal Testing track:
+
+1. **Sign the App Bundle (AAB)**:
+
+   - In Android Studio, go to Build > Generate Signed Bundle/APK
+   - Select Android App Bundle (AAB)
+   - Create or select a keystore file
+   - Fill in the keystore details and alias information
+   - Select release build variant
+   - Generate the signed bundle
+
+2. **Create a Google Play Developer Account**:
+
+   - Sign up at the Google Play Console
+   - Pay the one-time registration fee ($25)
+
+3. **Set Up Internal Testing**:
+
+   - Create a new app in the Play Console
+   - Go to Testing > Internal Testing
+   - Create a new release
+   - Upload the signed AAB file
+   - Add release notes
+   - Add testers (up to 100) via email or Google Groups
+   - Submit for review
+
+4. **Test the App**:
+   - Testers will receive an email with an opt-in link
+   - They can install the app from the Play Store
+   - Monitor feedback and crashes in the Play Console
+
+**Note**: Always test the app thoroughly before submitting to the Play Store. For local testing of AAB files, you can use bundletool to convert them to APKs, or preferably use the Internal App Sharing feature in the Play Store.
+
 ---
 
 ## Documentation
@@ -125,21 +177,41 @@ To build and deploy the app for Android devices:
 
 - **Components**:
   - `GameComponent`: Main gameplay logic and rendering.
+  - `PlayerComponent`: Handles player character rendering and skin selection.
+  - `ObstacleComponent`: Renders and manages obstacles.
+  - `HeartComponent`: Manages collectible hearts and life system.
+  - `HudComponent`: Displays game information (score, speed, lives).
+  - `DotComponent`: Manages background particle effects.
+  - `ExplosionComponent`: Handles collision effects.
+  - `StageTransitionComponent`: Manages stage transition animations.
 - **Services**:
-  - `GameService`: Manages game state and player logic.
+  - `GameService`: Core game state and logic management.
   - `PhysicsService`: Handles physics calculations like gravity and thrust.
   - `ObstacleService`: Spawns and manages obstacles.
+  - `StageService`: Manages game stages and progression.
+  - `HeartService`: Controls heart spawning and collection.
+  - `DotService`: Manages background particle system.
+  - `LeaderboardService`: Handles score tracking and leaderboards.
+  - `BackendService`: Manages server communication.
 
 ### Key Methods
 
 - `applyGravity`: Applies gravity and deceleration to the rocket.
 - `spawnObstacle`: Spawns obstacles based on the current stage.
 - `checkCollisions`: Detects collisions between the rocket and obstacles.
+- `startGameLoop`: Initializes and manages the main game loop.
+- `updateGame`: Updates game state, physics, and visuals.
+- `triggerExplosion`: Handles collision effects and life system.
+- `saveScore`: Saves player scores to the leaderboard.
+- `startCountdown`: Manages game start countdown.
+- `transitBackgroundColor`: Handles stage transition effects.
 
 ### Customization
 
 - **Adjust Stages**: Modify stage properties (e.g., gravity, max speed) in `StageService`.
 - **Add Obstacles**: Extend `ObstacleService` to include new obstacle types.
+- **Modify Physics**: Adjust physics parameters in `PhysicsService`.
+- **Add Skins**: Add new character skins to the `/public/skins/` directory.
 
 ---
 
