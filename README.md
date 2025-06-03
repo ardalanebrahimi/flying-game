@@ -63,6 +63,37 @@ A fun and engaging game where players control a rocket to navigate through diffe
   npm install -g @capacitor/cli
   ```
 
+### Environment Setup
+
+1. **Node.js Environment**:
+
+   - Recommended Node.js version: 18.x or higher
+   - Verify installation:
+     ```bash
+     node --version
+     npm --version
+     ```
+
+2. **Android Development Environment**:
+
+   - Install Android Studio
+   - Install Android SDK (minimum API level as specified in `android/app/build.gradle`)
+   - Set up environment variables:
+     - `ANDROID_HOME`: path to Android SDK
+     - `JAVA_HOME`: path to JDK
+   - Accept Android SDK licenses:
+     ```bash
+     yes | sdkmanager --licenses
+     ```
+
+3. **IDE Setup**:
+   - Recommended: Visual Studio Code
+   - Useful extensions:
+     - Angular Language Service
+     - TypeScript and JavaScript support
+     - Android iOS Emulator
+     - Live Server
+
 ### Installation
 
 1. Clone the repository:
@@ -121,6 +152,28 @@ To build and deploy the app for Android devices:
 4. **Build and Run the App**:
    - In Android Studio, click `Run` to install and run the app on an emulator or connected device.
 
+### Version Management
+
+The app's version information is managed in `android/app/build.gradle`:
+
+```gradle
+defaultConfig {
+    applicationId "com.ardiland.flyinggame"
+    versionCode 2        // Increment this for each Play Store release
+    versionName "1.0.1"  // Update this to reflect the user-facing version
+}
+```
+
+- `versionCode`: Must be incremented for each Play Store release
+- `versionName`: Semantic version shown to users
+- Each new release requires a higher `versionCode` than all previous releases
+
+When updating the app:
+
+1. Increment `versionCode` by at least 1
+2. Update `versionName` to reflect the nature of changes
+3. Rebuild the app using the build steps above
+
 ### Deploying to Play Store
 
 Follow these steps to deploy your app to the Google Play Store's Internal Testing track:
@@ -134,12 +187,19 @@ Follow these steps to deploy your app to the Google Play Store's Internal Testin
    - Select release build variant
    - Generate the signed bundle
 
-2. **Create a Google Play Developer Account**:
+2. **Version Management**:
+
+   - Each app release requires a unique and increasing `versionCode` in `android/app/build.gradle`
+   - Increment `versionCode` by at least 1 for each new release
+   - Update `versionName` to reflect the nature of changes (e.g., "1.0.1")
+   - Version codes can never be reused - Play Store will reject uploads with duplicate version codes
+
+3. **Create a Google Play Developer Account**:
 
    - Sign up at the Google Play Console
    - Pay the one-time registration fee ($25)
 
-3. **Set Up Internal Testing**:
+4. **Set Up Internal Testing**:
 
    - Create a new app in the Play Console
    - Go to Testing > Internal Testing
@@ -149,7 +209,7 @@ Follow these steps to deploy your app to the Google Play Store's Internal Testin
    - Add testers (up to 100) via email or Google Groups
    - Submit for review
 
-4. **Test the App**:
+5. **Test the App**:
    - Testers will receive an email with an opt-in link
    - They can install the app from the Play Store
    - Monitor feedback and crashes in the Play Console
@@ -172,6 +232,27 @@ Follow these steps to deploy your app to the Google Play Store's Internal Testin
 ---
 
 ## Development
+
+### Testing
+
+To run the tests:
+
+```bash
+npm test
+```
+
+The game includes:
+
+- Unit tests for services and components
+- Integration tests for game mechanics
+- End-to-end tests for critical user paths
+
+Key test files:
+
+- `game.service.spec.ts`: Tests for core game logic
+- `physics.service.spec.ts`: Tests for physics calculations
+- `obstacle.service.spec.ts`: Tests for obstacle management
+- `stage.service.spec.ts`: Tests for stage progression
 
 ### Code Structure
 
@@ -220,7 +301,32 @@ Follow these steps to deploy your app to the Google Play Store's Internal Testin
 - **Collision Detection**: Improvements may be needed for edge cases.
 - **Performance**: Optimizations for a large number of dots and obstacles are ongoing.
 
----
+## Troubleshooting
+
+### Common Issues and Solutions
+
+1. **Version Code Conflicts**:
+
+   - Error: "Version code X has already been used"
+   - Solution: Increment `versionCode` in `android/app/build.gradle`
+
+2. **Build Failures**:
+
+   - Clean the project: `cd android && ./gradlew clean`
+   - Ensure all dependencies are installed: `npm install`
+   - Check Android SDK version compatibility
+
+3. **Android Studio Issues**:
+
+   - Invalid Gradle JDK: File > Settings > Build > Gradle > Gradle JDK
+   - Sync Failures: File > Sync Project with Gradle Files
+
+4. **Runtime Errors**:
+   - Clear browser cache for web testing
+   - For Android: Clear app data and cache
+   - Check console for detailed error messages
+
+For additional support, check the issue tracker or create a new issue.
 
 ## License
 
