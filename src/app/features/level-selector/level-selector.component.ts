@@ -36,10 +36,21 @@ export class LevelSelectorComponent {
       setSelectedLevel(level.id);
     }
   }
-
   startLevel(): void {
     if (this.selectedLevel) {
       this.levelSelected.emit(this.selectedLevel);
+    }
+  }
+
+  getDifficultyLevel(levelId: number): number {
+    // Returns a difficulty rating from 1-5 stars based on level
+    switch (levelId) {
+      case 1:
+        return 2; // Easy
+      case 2:
+        return 4; // Hard
+      default:
+        return 3; // Medium
     }
   }
 }

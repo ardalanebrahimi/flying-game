@@ -1,22 +1,52 @@
 <div class="start-page">
-  <img src="skins/rocket.png" alt="Game Logo" class="game-logo" />
-  <h1>Welcome to the Game</h1>
+  <div class="hero-section">
+    <img src="skins/rocket.png" alt="Game Logo" class="game-logo" />
+    <h1 class="title">Rocket Adventure</h1>
+    <p class="subtitle">Embark on an epic journey through space and beyond</p>
+  </div>
 
   <div *ngIf="showNamePrompt" class="name-prompt">
-    <p>Please enter your name to start:</p>
-    <input type="text" [(ngModel)]="userName" placeholder="Enter your name" />
-    <button (click)="saveName()">Save</button>
+    <div class="prompt-card">
+      <h2>Welcome, Explorer!</h2>
+      <p>Enter your pilot name to begin your adventure:</p>
+      <div class="input-group">
+        <input
+          type="text"
+          [(ngModel)]="userName"
+          placeholder="Enter your name"
+          class="name-input"
+        />
+        <button (click)="saveName()" class="save-button">
+          <span>Start Adventure</span>
+          <i class="arrow">→</i>
+        </button>
+      </div>
+    </div>
   </div>
-  <div *ngIf="!showNamePrompt && !showLevelSelector" class="menu-buttons">
-    <button (click)="showLevelSelection()">Start Game</button>
-    <button (click)="chooseSkin()">Choose Skin</button>
-    <button (click)="viewLeaderboard()">View Leaderboard</button>
-    <button (click)="editProfile()">Profile Settings</button>
+
+  <div *ngIf="!showNamePrompt && !showLevelSelector" class="main-menu">
+    <button (click)="showLevelSelection()" class="menu-button primary">
+      <i class="icon">🚀</i>
+      <span>Start Mission</span>
+    </button>
+    <button (click)="chooseSkin()" class="menu-button">
+      <i class="icon">🎨</i>
+      <span>Customize Ship</span>
+    </button>
+    <button (click)="viewLeaderboard()" class="menu-button">
+      <i class="icon">🏆</i>
+      <span>Hall of Fame</span>
+    </button>
+    <button (click)="editProfile()" class="menu-button">
+      <i class="icon">⚙️</i>
+      <span>Settings</span>
+    </button>
   </div>
 
   <div *ngIf="showLevelSelector" class="level-selection">
     <button (click)="showLevelSelector = false" class="back-button">
-      ← Back to Menu
+      <i class="back-icon">←</i>
+      <span>Back to Menu</span>
     </button>
     <app-level-selector
       (levelSelected)="onLevelSelected($event)"

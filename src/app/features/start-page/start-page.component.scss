@@ -3,210 +3,291 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  background: linear-gradient(-45deg, #c03118, #5c5eda, #2764ce, #62de49);
-  background-size: 400% 400%;
-  animation: gradientMove 10s ease infinite;
-  text-align: center;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-}
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-size: 300% 300%;
+  animation: gradientShift 8s ease infinite;
+  position: relative;
+  overflow: hidden;
 
-/* Mobile-specific fixes for start page */
-@media (max-width: 768px) {
-  .start-page {
-    overflow-y: visible !important;
-    height: auto !important;
-    min-height: 100vh;
-    padding: 20px;
-    justify-content: flex-start;
-    padding-top: 40px;
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 80%,
+        rgba(120, 119, 198, 0.3) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 20%,
+        rgba(255, 119, 198, 0.3) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
   }
 }
 
-@keyframes gradientMove {
-  0% {
+@keyframes gradientShift {
+  0%,
+  100% {
     background-position: 0% 50%;
   }
   50% {
     background-position: 100% 50%;
   }
-  100% {
-    background-position: 0% 50%;
-  }
 }
 
-.start-page h1 {
-  font-size: 36px;
-  font-weight: bold;
-  color: white;
-  animation: fadeIn 2s ease-in-out;
-  margin-bottom: 30px;
-}
-
-button {
-  margin: 5px;
-  padding: 15px 30px;
-  font-size: 20px;
-  color: white;
-  background-color: #007bff;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  min-width: 200px;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-
-  &:hover {
-    background-color: #0056b3;
-    transform: scale(1.05); /* Slight zoom on hover */
-  }
-
-  &:active {
-    transform: scale(0.95); /* Slight shrink on click */
-  }
-}
-
-@keyframes fadeIn {
-  0% {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.hero-section {
+  text-align: center;
+  margin-bottom: 3rem;
+  z-index: 2;
+  position: relative;
 }
 
 .game-logo {
-  width: 150px;
-  margin-bottom: 20px;
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1.5rem;
+  filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+  animation: float 3s ease-in-out infinite;
 }
 
-.name-prompt {
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.title {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 2rem;
+  font-weight: 300;
+}
+
+.main-menu {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  animation: fadeIn 1s ease-in-out;
+  gap: 1rem;
+  z-index: 2;
+  position: relative;
+  min-width: 300px;
+}
 
-  p {
-    color: white;
-    font-size: 20px;
-    margin: 0;
+.menu-button {
+  padding: 1rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 50px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
   }
 
-  input {
-    padding: 10px 15px;
-    font-size: 18px;
-    border: 2px solid #007bff;
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.9);
-    width: 250px;
-    text-align: center;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.25);
 
-    &:focus {
-      outline: none;
-      border-color: #0056b3;
-      box-shadow: 0 0 10px rgba(0, 86, 179, 0.3);
+    &::before {
+      left: 100%;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  &.primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+
+    &:hover {
+      box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
     }
   }
 }
 
-.menu-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  animation: fadeIn 1s ease-in-out;
-}
+.name-prompt {
+  z-index: 2;
+  position: relative;
+  min-width: 400px;
+  margin-bottom: 2rem;
 
-.back-button {
-  background-color: #6c757d;
-  margin-bottom: 20px;
-  min-width: auto;
-  padding: 10px 20px;
-  font-size: 16px;
+  .prompt-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    padding: 2rem;
+    text-align: center;
 
-  &:hover {
-    background-color: #5a6268;
+    h2 {
+      color: white;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    p {
+      color: rgba(255, 255, 255, 0.8);
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .input-group {
+    display: flex;
+    gap: 1rem;
+
+    .name-input {
+      flex: 1;
+      padding: 0.8rem 1rem;
+      border: none;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      font-size: 1rem;
+      backdrop-filter: blur(10px);
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
+
+      &:focus {
+        outline: none;
+        background: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+      }
+    }
+
+    .save-button {
+      padding: 0.8rem 1.5rem;
+      background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 255, 136, 0.4);
+      }
+    }
   }
 }
 
 .level-selection {
+  z-index: 2;
+  position: relative;
   width: 100%;
-  max-width: 900px;
-  height: 100vh;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-}
-
-/* Mobile fixes for level selection container */
-@media (max-width: 768px) {
-  .level-selection {
-    width: 100% !important;
-    max-width: none !important;
-    margin-top: 20px;
-    height: auto !important;
-    min-height: calc(100vh - 100px);
-    overflow-y: visible !important;
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y !important;
-  }
-}
-
-@media (max-width: 768px) {
-  .start-page {
-    padding: 20px;
-    min-height: 100vh;
-    justify-content: flex-start;
-    padding-top: 40px;
-  }
-
-  .start-page h1 {
-    font-size: 28px;
-    margin-bottom: 20px;
-  }
-
-  button {
-    font-size: 16px;
-    padding: 12px 24px;
-    min-width: 180px;
-
-    &:hover {
-      background-color: #007bff; // Disable hover effect on mobile
-      transform: none;
-    }
-
-    &:active {
-      transform: scale(0.95);
-    }
-  }
-
-  .name-prompt input {
-    width: 200px;
-    font-size: 16px;
-  }
-  .level-selection {
-    width: 100%;
-    max-width: none;
-    margin-top: 20px;
-    height: calc(100vh - 60px); /* Account for back button */
-    overflow-y: scroll; /* Force scroll on mobile */
-    -webkit-overflow-scrolling: touch;
-    touch-action: pan-y;
-  }
+  max-width: 1200px;
 
   .back-button {
-    margin-bottom: 10px;
-    padding: 8px 16px;
-    font-size: 14px;
-    min-width: auto;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: white;
+    border-radius: 25px;
+    padding: 0.8rem 1.5rem;
+    margin-bottom: 2rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+
+    .back-icon {
+      font-size: 1.2rem;
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    }
+  }
+}
+
+// Enhanced mobile responsiveness
+@media (max-width: 768px) {
+  .start-page {
+    padding: 2rem 1rem;
+    justify-content: flex-start;
+    padding-top: 10vh;
+  }
+
+  .main-menu {
+    min-width: 280px;
+  }
+
+  .name-prompt {
+    min-width: 280px;
+
+    .prompt-card {
+      padding: 1.5rem;
+    }
+
+    .input-group {
+      flex-direction: column;
+
+      .name-input {
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  .level-selection {
+    padding: 0 1rem;
+
+    .back-button {
+      margin-bottom: 1rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.9rem;
+    }
   }
 }

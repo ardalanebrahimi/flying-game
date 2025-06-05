@@ -1,4 +1,11 @@
 <div class="skin-container">
+  <div class="header">
+    <h1>Choose Your Ship</h1>
+    <p class="subtitle">
+      Select your pilot ship and customize your flying experience
+    </p>
+  </div>
+
   <div class="skin-grid">
     <div
       class="skin-card"
@@ -7,11 +14,19 @@
       (click)="selectSkin(skin.id)"
     >
       <img [src]="skin.image" [alt]="skin.name" />
-      <p>{{ skin.name }}</p>
+      <h3>{{ skin.name }}</h3>
+      <p class="skin-type">Pilot Ship</p>
     </div>
   </div>
-  <div class="button-container">
-    <button (click)="confirmSelection()">Confirm</button>
-    <button (click)="goBack()">Back</button>
+
+  <div class="action-buttons">
+    <button
+      class="primary"
+      (click)="confirmSelection()"
+      [disabled]="!selectedSkinId"
+    >
+      Confirm Selection
+    </button>
+    <button class="secondary" (click)="goBack()">Back to Menu</button>
   </div>
 </div>

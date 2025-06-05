@@ -1,72 +1,178 @@
 .skin-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    h1 {
+      color: white;
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1.1rem;
+    }
+  }
 }
 
 .skin-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-  gap: 20px;
-  overflow-y: auto;
-  max-height: calc(100vh - 100px); /* Leave space for buttons */
-  width: 100%;
-  padding: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .skin-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 2px solid transparent;
-  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 1.5rem;
   text-align: center;
-  padding: 10px;
   cursor: pointer;
-  transition: transform 0.3s, border-color 0.3s, box-shadow 0.3s;
-  background-color: #f5f5f5;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(20px);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &.selected {
+    border-color: #00ff88;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.4);
+    background: rgba(0, 255, 136, 0.1);
+  }
+  img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+    margin-bottom: 1rem;
+    filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+  }
+
+  h3 {
+    color: white;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+  }
+
+  .skin-type {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+  }
 }
 
-.skin-card:hover {
-  transform: scale(1.1);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-}
-
-.skin-card img {
-  width: 80px;
-  height: 80px;
-  object-fit: fill;
-  border-radius: 10px;
-  margin-bottom: 5px;
-}
-
-.skin-card.selected {
-  border-color: gold;
-  transform: scale(1.1);
-  background-color: #fff8dc;
-}
-
-.button-container {
+.action-buttons {
   display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 10px;
+  justify-content: center;
+  gap: 1rem;
+  max-width: 500px;
+  margin: 0 auto;
+
+  button {
+    flex: 1;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    &.primary {
+      background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
+      color: white;
+      box-shadow: 0 8px 25px rgba(0, 255, 136, 0.3);
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(0, 255, 136, 0.4);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+      }
+    }
+
+    &.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+
+      &:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+    }
+  }
 }
 
-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  background-color: #007bff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
+@media (max-width: 768px) {
+  .skin-container {
+    padding: 1rem;
+  }
 
-button:hover {
-  background-color: #0056b3;
+  .skin-grid {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+  }
+
+  .skin-card {
+    padding: 1rem;
+
+    img {
+      width: 60px;
+      height: 60px;
+    }
+
+    h3 {
+      font-size: 0.9rem;
+    }
+
+    .skin-type {
+      font-size: 0.8rem;
+    }
+  }
+
+  .action-buttons {
+    flex-direction: column;
+    max-width: 300px;
+
+    button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+    }
+  }
 }
