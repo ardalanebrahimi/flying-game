@@ -7,11 +7,19 @@
     <input type="text" [(ngModel)]="userName" placeholder="Enter your name" />
     <button (click)="saveName()">Save</button>
   </div>
-
-  <div *ngIf="!showNamePrompt" class="menu-buttons">
-    <button (click)="startGame()">Start</button>
+  <div *ngIf="!showNamePrompt && !showLevelSelector" class="menu-buttons">
+    <button (click)="showLevelSelection()">Start Game</button>
     <button (click)="chooseSkin()">Choose Skin</button>
     <button (click)="viewLeaderboard()">View Leaderboard</button>
     <button (click)="editProfile()">Profile Settings</button>
+  </div>
+
+  <div *ngIf="showLevelSelector" class="level-selection">
+    <button (click)="showLevelSelector = false" class="back-button">
+      ← Back to Menu
+    </button>
+    <app-level-selector
+      (levelSelected)="onLevelSelected($event)"
+    ></app-level-selector>
   </div>
 </div>

@@ -8,14 +8,19 @@ import { Stage } from '../../../../core/models/stage.model';
 import { LeaderboardService } from '../../../../core/services/leaderboard.service';
 import { BackendService } from '../../../../core/services/backend.service';
 import { HeartService } from '../heart/heart.service';
+import {
+  LevelConfig,
+  getCurrentLevel,
+  unlockLevel,
+} from '../../../../core/config/level-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameService {
-  private static readonly INITIAL_TARGET_HEIGHT = 100000;
   private gameInterval: any;
   private countdownInterval: any;
+  private currentLevelConfig: LevelConfig = getCurrentLevel();
 
   state: GameState = {
     score: 0,
@@ -29,7 +34,7 @@ export class GameService {
     countdownTimer: 0,
     isRecovering: false,
     hasWon: false,
-    targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+    targetHeight: getCurrentLevel().goalHeight,
     isButtonPressed: false,
   };
 
@@ -63,12 +68,28 @@ export class GameService {
       invincibilityTimer: 0,
       hasWon: false,
       countdownTimer: 3,
-      targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+      targetHeight: this.currentLevelConfig.goalHeight,
       isButtonPressed: false,
     };
 
     this.resetVisuals();
     this.startCountdown();
+  }
+
+  /**
+   * Initializes the game with a specific level configuration.
+   * @param levelConfig - The level configuration to use.
+   */
+  initializeWithLevel(levelConfig: LevelConfig): void {
+    this.currentLevelConfig = levelConfig;
+    this.state.targetHeight = levelConfig.goalHeight;
+
+    // Initialize all services with the new level config
+    this.stageService.initializeWithLevel(levelConfig);
+    this.obstacleService.initializeWithLevel(levelConfig);
+
+    // Reset game state for new level
+    this.resetGame();
   }
 
   private resetVisuals(): void {
@@ -172,7 +193,7 @@ export class GameService {
       countdownTimer: 0,
       isRecovering: false,
       hasWon: false,
-      targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+      targetHeight: this.currentLevelConfig.goalHeight,
       isButtonPressed: false,
     };
 
@@ -201,9 +222,16 @@ export class GameService {
     this.stopGameLoop();
     this.saveScore();
   }
-
   private handleWin(): void {
     this.state.hasWon = true;
+
+    // Unlock next level if current level is completed
+    const nextLevelId = this.currentLevelConfig.id + 1;
+    if (nextLevelId <= 2) {
+      // Only unlock if next level exists
+      unlockLevel(nextLevelId);
+    }
+
     this.handleGameOver();
   }
   triggerExplosion(): void {
@@ -393,7 +421,7 @@ export class GameService {
       countdownTimer: 0,
       isRecovering: false,
       hasWon: false,
-      targetHeight: GameService.INITIAL_TARGET_HEIGHT,
+      targetHeight: this.currentLevelConfig.goalHeight,
       isButtonPressed: false,
     };
 

@@ -3,17 +3,20 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BackendService } from '../../core/services/backend.service';
+import { LevelSelectorComponent } from '../level-selector/level-selector.component';
+import { LevelConfig, setSelectedLevel } from '../../core/config/level-config';
 
 @Component({
   selector: 'app-start-page',
   templateUrl: './start-page.component.html',
   styleUrls: ['./start-page.component.scss'],
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LevelSelectorComponent],
   standalone: true,
 })
 export class StartPageComponent implements OnInit {
   showNamePrompt = false;
   userName = '';
+  showLevelSelector = false;
 
   constructor(private router: Router, private backendService: BackendService) {}
 
@@ -55,6 +58,16 @@ export class StartPageComponent implements OnInit {
         this.showNamePrompt = false;
       })
       .catch((error) => console.error('Failed to save profile:', error));
+  }
+
+  showLevelSelection(): void {
+    this.showLevelSelector = true;
+  }
+
+  onLevelSelected(levelConfig: LevelConfig): void {
+    setSelectedLevel(levelConfig.id);
+    this.showLevelSelector = false;
+    this.router.navigate(['/game']);
   }
 
   private generateUUID(): string {

@@ -11,6 +11,7 @@ import { GameService } from './game.service';
 import { Router } from '@angular/router';
 import { HeartComponent } from '../heart/heart.component';
 import { StageTransitionComponent } from '../stage-transition/stage-transition.component';
+import { getCurrentLevel } from '../../../../core/config/level-config';
 
 @Component({
   selector: 'app-game',
@@ -48,12 +49,13 @@ export class GameComponent implements OnInit, OnDestroy {
     if (!profile.name) {
       this.router.navigate(['/profile']);
       return;
-    }
-
-    // Check if tutorial should be shown
+    } // Check if tutorial should be shown
     const hideTutorial = localStorage.getItem('hideTutorial') === 'true';
     this.showTutorial = !hideTutorial;
 
+    // Initialize game with current level configuration
+    const currentLevel = getCurrentLevel();
+    this.gameService.initializeWithLevel(currentLevel);
     this.gameService.initializeGame();
   }
 

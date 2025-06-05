@@ -1,70 +1,24 @@
 import { Injectable } from '@angular/core';
 import { Stage } from '../models/stage.model';
+import { LevelConfig, getCurrentLevel } from '../config/level-config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class StageService {
-  private stages: Stage[] = [
-    {
-      name: "Earth's Surface",
-      gravity: -2,
-      maxSpeed: 5,
-      deceleration: -1, // Simulate air resistance
-      background: 'linear-gradient(to bottom, #87ceeb, #4682b4)',
-      heightRange: [0, 100],
-    },
-    {
-      name: 'Sky',
-      gravity: -1.5,
-      maxSpeed: 15,
-      deceleration: -0.8, // Lighter air resistance
-      background: 'linear-gradient(to bottom, #4682b4, #000033)',
-      heightRange: [100, 500],
-    },
-    {
-      name: 'Stratosphere',
-      gravity: -1,
-      maxSpeed: 30,
-      deceleration: -0.6,
-      background: 'linear-gradient(to bottom, #000033, #000066)',
-      heightRange: [500, 1000],
-    },
-    {
-      name: 'Mesosphere',
-      gravity: -0.5,
-      maxSpeed: 50,
-      deceleration: -0.4,
-      background: 'linear-gradient(to bottom, #000066, #000099)',
-      heightRange: [1000, 2000],
-    },
-    {
-      name: 'Outer Space',
-      gravity: 0,
-      maxSpeed: 100,
-      deceleration: -0.2,
-      background: 'linear-gradient(to bottom, #000099, #1a1a1a)',
-      heightRange: [2000, 5000],
-    },
-    {
-      name: 'Deep Space',
-      gravity: 0,
-      maxSpeed: 120, // Reduced from 150
-      deceleration: -0.15, // Slightly more control
-      background: 'linear-gradient(to bottom, #1a1a1a, #3a3a3a)',
-      heightRange: [5000, 10000],
-    },
-    {
-      name: 'Infinite Space',
-      gravity: 0,
-      maxSpeed: 150, // Reduced from 200
-      deceleration: -0.1, // Increased from -0.05 for better control
-      background: 'linear-gradient(to bottom, #3a3a3a, #000000)',
-      heightRange: [10000, Infinity],
-    },
-  ];
-
+  private currentLevelConfig: LevelConfig = getCurrentLevel();
+  private stages: Stage[] = this.currentLevelConfig.stages;
   private currentStage: Stage = this.stages[0];
+
+  /**
+   * Initializes the service with a specific level configuration.
+   * @param levelConfig - The level configuration to use.
+   */
+  initializeWithLevel(levelConfig: LevelConfig): void {
+    this.currentLevelConfig = levelConfig;
+    this.stages = levelConfig.stages;
+    this.currentStage = this.stages[0];
+  }
 
   /**
    * Retrieves the stage corresponding to the given height.
@@ -125,7 +79,7 @@ export class StageService {
   }
 
   /**
-   * Resets the current stage to the default (Earth's Surface).
+   * Resets the current stage to the default (first stage of current level).
    */
   resetStage(): void {
     this.currentStage = this.stages[0];

@@ -127,6 +127,24 @@ A fun and engaging game where players control a rocket to navigate through diffe
 
 To build and deploy the app for Android devices:
 
+### Quick Build (One Command)
+
+Run all three steps with a single command:
+
+```bash
+npm run build:android
+```
+
+This command will:
+
+1. Build the production version (`ng build --configuration production`)
+2. Copy the build to Capacitor (`npx cap copy`)
+3. Open Android Studio (`npx cap open android`)
+
+### Manual Steps:
+
+If you prefer to run each step individually:
+
 ### Steps:
 
 1. **Build the production version of the app:**

@@ -1,0 +1,287 @@
+/* Level Selector - Mobile-First CSS with Fixed Scrolling */
+
+.level-selector {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  min-height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  position: relative;
+  z-index: 1;
+  touch-action: pan-y;
+}
+
+/* Force mobile scrolling on all mobile devices */
+@media (max-width: 768px) {
+  .level-selector {
+    padding: 15px;
+    height: 100vh !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    position: relative !important;
+    touch-action: pan-y !important;
+    /* Force hardware acceleration for smoother scrolling */
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 30px;
+  font-size: 24px;
+}
+
+.levels-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+@media (max-width: 768px) {
+  h2 {
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+
+  .levels-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin-bottom: 20px;
+  }
+}
+
+.level-card {
+  border: 3px solid #ddd;
+  border-radius: 15px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  z-index: 2;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: pan-y; /* Allow scrolling over cards */
+}
+
+.level-card:hover:not(.locked) {
+  border-color: #4caf50;
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.level-card:active:not(.locked) {
+  transform: translateY(-2px);
+  transition: all 0.1s ease;
+}
+
+.level-card.selected {
+  border-color: #4caf50;
+  background: #f8fff8;
+}
+
+.level-card.locked {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.level-card.locked:hover {
+  transform: none;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .level-card {
+    padding: 15px;
+    touch-action: pan-y !important;
+  }
+
+  .level-card:hover:not(.locked) {
+    transform: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  .level-card:active:not(.locked) {
+    transform: scale(0.98);
+    transition: all 0.1s ease;
+  }
+}
+
+.level-image {
+  margin-bottom: 15px;
+}
+
+.level-theme-preview {
+  height: 100px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.level-number {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 10px 15px;
+  border-radius: 50%;
+  backdrop-filter: blur(10px);
+}
+
+.level-info h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+  font-size: 20px;
+}
+
+.level-theme {
+  color: #666;
+  font-style: italic;
+  margin: 5px 0;
+}
+
+.level-goal {
+  color: #4caf50;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.level-status {
+  margin-top: 10px;
+}
+
+.locked-badge {
+  background: #ff6b6b;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+
+.selected-badge {
+  background: #4caf50;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 15px;
+  font-size: 12px;
+}
+
+.level-details {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #4caf50;
+}
+
+.level-details h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.level-details p {
+  margin: 8px 0;
+  color: #666;
+}
+
+.start-button {
+  background: #4caf50;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  position: relative;
+  z-index: 3;
+  min-height: 44px;
+  min-width: 44px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  touch-action: manipulation;
+}
+
+.start-button:hover:not(:disabled) {
+  background: #45a049;
+}
+
+.start-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .start-button {
+    padding: 16px 32px;
+    font-size: 18px;
+    margin-top: 20px;
+    width: 100%;
+    border-radius: 8px;
+    min-height: 48px;
+  }
+
+  .start-button:hover:not(:disabled) {
+    background: #4caf50;
+  }
+
+  .start-button:active:not(:disabled) {
+    background: #45a049;
+    transform: scale(0.98);
+  }
+}
+
+@media (max-width: 480px) {
+  .level-selector {
+    padding: 10px;
+    height: 100vh !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    touch-action: pan-y !important;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+  }
+
+  .levels-grid {
+    gap: 10px;
+  }
+
+  .level-card {
+    padding: 12px;
+    border-radius: 12px;
+    touch-action: pan-y !important;
+  }
+
+  .level-theme-preview {
+    height: 80px;
+    font-size: 28px;
+  }
+
+  .level-info h3 {
+    font-size: 18px;
+  }
+
+  .level-details {
+    padding: 15px;
+    margin-top: 15px;
+  }
+}

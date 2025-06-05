@@ -1,0 +1,63 @@
+<div class="level-selector">
+  <h2>Select Level</h2>
+  <div class="levels-grid">
+    <div
+      *ngFor="let level of availableLevels"
+      class="level-card"
+      [class.locked]="!level.unlocked"
+      [class.selected]="selectedLevelId === level.config.id"
+      (click)="selectLevel(level.config)"
+      [attr.tabindex]="level.unlocked ? 0 : -1"
+      role="button"
+      [attr.aria-label]="
+        'Select ' + level.config.name + (level.unlocked ? '' : ' (locked)')
+      "
+    >
+      <div class="level-image">
+        <div
+          class="level-theme-preview"
+          [style.background]="level.config.backgroundColor"
+        >
+          <span class="level-number">{{ level.config.id }}</span>
+        </div>
+      </div>
+      <div class="level-info">
+        <h3>{{ level.config.name }}</h3>
+        <p class="level-theme">{{ level.config.theme }}</p>
+        <p class="level-goal">Goal: {{ level.config.goalHeight }}m</p>
+        <div class="level-status">
+          <span *ngIf="!level.unlocked" class="locked-badge">🔒 Locked</span>
+          <span
+            *ngIf="level.unlocked && selectedLevelId === level.config.id"
+            class="selected-badge"
+            >✓ Selected</span
+          >
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="level-details" *ngIf="selectedLevel">
+    <h3>{{ selectedLevel.name }}</h3>
+    <p><strong>Theme:</strong> {{ selectedLevel.theme }}</p>
+    <p><strong>Goal Height:</strong> {{ selectedLevel.goalHeight }}m</p>
+    <p>
+      <strong>Stages:</strong> {{ selectedLevel.stages.length }} different
+      environments
+    </p>
+    <p>
+      <strong>Available Skins:</strong>
+      {{ selectedLevel.availableSkins.length }} options
+    </p>
+    <button
+      class="start-button"
+      (click)="startLevel()"
+      [disabled]="!selectedLevel"
+      type="button"
+      [attr.aria-label]="
+        selectedLevel ? 'Start ' + selectedLevel.name : 'Select a level first'
+      "
+    >
+      Start {{ selectedLevel.name }}
+    </button>
+  </div>
+</div>

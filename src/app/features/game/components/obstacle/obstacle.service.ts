@@ -1,6 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Obstacle } from '../../../../core/models/obstacle.model';
-import { OBSTACLE_CONFIG } from '../../../../core/config/obstacle-config';
+import {
+  LevelConfig,
+  getCurrentLevel,
+} from '../../../../core/config/level-config';
+import { StageObstacleConfig } from '../../../../core/config/obstacle-config';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +14,18 @@ export class ObstacleService {
   private obstacleMovementInterval: any;
   private obstacleSpawnerTimeout: any;
   private currentHeight = 0;
+  private currentLevelConfig: LevelConfig = getCurrentLevel();
+  private obstacleConfig: Record<string, StageObstacleConfig> =
+    this.currentLevelConfig.obstacles;
+
+  /**
+   * Initializes the service with a specific level configuration.
+   * @param levelConfig - The level configuration to use.
+   */
+  initializeWithLevel(levelConfig: LevelConfig): void {
+    this.currentLevelConfig = levelConfig;
+    this.obstacleConfig = levelConfig.obstacles;
+  }
 
   startObstacleLifecycle(
     stageCallback: () => string,
@@ -44,7 +60,7 @@ export class ObstacleService {
       if (velocityCallback() !== 0) {
         const currentStage = stageCallback();
         this.currentHeight = heightCallback();
-        const config = OBSTACLE_CONFIG[currentStage];
+        const config = this.obstacleConfig[currentStage];
 
         if (config) {
           const baseDelay = this.getRandomNumber(config.spawnRateRange);
@@ -83,7 +99,7 @@ export class ObstacleService {
     }, 50);
   }
   private spawnObstacle(stage: string): void {
-    const config = OBSTACLE_CONFIG[stage];
+    const config = this.obstacleConfig[stage];
     if (!config) return;
 
     const typeConfig = this.getRandomElement(config.types);

@@ -8,6 +8,21 @@
   background-size: 400% 400%;
   animation: gradientMove 10s ease infinite;
   text-align: center;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* Mobile-specific fixes for start page */
+@media (max-width: 768px) {
+  .start-page {
+    overflow-y: visible !important;
+    height: auto !important;
+    min-height: 100vh;
+    padding: 20px;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
 }
 
 @keyframes gradientMove {
@@ -41,6 +56,12 @@ button {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   min-width: 200px;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 
   &:hover {
     background-color: #0056b3;
@@ -105,18 +126,87 @@ button {
   animation: fadeIn 1s ease-in-out;
 }
 
+.back-button {
+  background-color: #6c757d;
+  margin-bottom: 20px;
+  min-width: auto;
+  padding: 10px 20px;
+  font-size: 16px;
+
+  &:hover {
+    background-color: #5a6268;
+  }
+}
+
+.level-selection {
+  width: 100%;
+  max-width: 900px;
+  height: 100vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+/* Mobile fixes for level selection container */
 @media (max-width: 768px) {
+  .level-selection {
+    width: 100% !important;
+    max-width: none !important;
+    margin-top: 20px;
+    height: auto !important;
+    min-height: calc(100vh - 100px);
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .start-page {
+    padding: 20px;
+    min-height: 100vh;
+    justify-content: flex-start;
+    padding-top: 40px;
+  }
+
   .start-page h1 {
     font-size: 28px;
+    margin-bottom: 20px;
   }
 
   button {
     font-size: 16px;
     padding: 12px 24px;
+    min-width: 180px;
+
+    &:hover {
+      background-color: #007bff; // Disable hover effect on mobile
+      transform: none;
+    }
+
+    &:active {
+      transform: scale(0.95);
+    }
   }
 
   .name-prompt input {
     width: 200px;
     font-size: 16px;
+  }
+  .level-selection {
+    width: 100%;
+    max-width: none;
+    margin-top: 20px;
+    height: calc(100vh - 60px); /* Account for back button */
+    overflow-y: scroll; /* Force scroll on mobile */
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y;
+  }
+
+  .back-button {
+    margin-bottom: 10px;
+    padding: 8px 16px;
+    font-size: 14px;
+    min-width: auto;
   }
 }
