@@ -414,7 +414,7 @@ export const LEVEL_2_CONFIG: LevelConfig = {
     '/skins/tree2.png',
     '/skins/lightening.png',
   ],
-  goalHeight: 15000,
+  goalHeight: 120000,
 };
 
 // Export all available levels

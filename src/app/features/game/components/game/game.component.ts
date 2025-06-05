@@ -76,7 +76,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.clearMoveInterval();
     this.moveInterval = setInterval(() => {
       this.gameService.moveLeft();
-    }, 50);
+    }, 40);
   }
 
   startMovingRight(): void {
@@ -84,7 +84,7 @@ export class GameComponent implements OnInit, OnDestroy {
     this.clearMoveInterval();
     this.moveInterval = setInterval(() => {
       this.gameService.moveRight();
-    }, 50);
+    }, 40);
   }
 
   stopMoving(): void {

@@ -378,11 +378,13 @@ export class GameService {
   get rocketVisualPosition(): number {
     const screenHeight = window.innerHeight;
     const minPosition = 128; // Minimum height to stay above controls
+    const visualScale = 3; // Increased scale factor for reaching max position sooner
 
-    // Ensure the player starts moving up visually from the beginning
+    // Enhanced calculation for smoother and sooner max position reach
+    const scaledPlayerY = this.state.playerY * visualScale;
     return Math.max(
       minPosition,
-      Math.min(this.state.playerY + minPosition, screenHeight / 3)
+      Math.min(scaledPlayerY + minPosition, screenHeight / 3)
     );
   }
   private startInvincibilityPeriod(): void {

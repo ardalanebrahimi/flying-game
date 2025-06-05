@@ -1,6 +1,5 @@
 <div class="score">Score: {{ gameService.state.score | number }}</div>
-<div class="speed">Speed: {{ rocketSpeedKmh }} km/h</div>
-<div class="stage">Stage: {{ gameService.state.currentStage }}</div>
+<div class="speed">{{ rocketSpeedKmh }} km/h</div>
 <div class="lives">
   <img
     *ngFor="let i of [1, 2, 3]"
