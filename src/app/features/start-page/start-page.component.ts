@@ -16,7 +16,6 @@ import { LevelConfig, setSelectedLevel } from '../../core/config/level-config';
 export class StartPageComponent implements OnInit {
   showNamePrompt = false;
   userName = '';
-  showLevelSelector = false;
 
   constructor(private router: Router, private backendService: BackendService) {}
 
@@ -40,7 +39,6 @@ export class StartPageComponent implements OnInit {
   editProfile(): void {
     this.router.navigate(['/profile']); // Navigate to the profile setup page
   }
-
   saveName(): void {
     if (!this.userName.trim()) {
       alert('Please enter a valid name.');
@@ -60,13 +58,8 @@ export class StartPageComponent implements OnInit {
       .catch((error) => console.error('Failed to save profile:', error));
   }
 
-  showLevelSelection(): void {
-    this.showLevelSelector = true;
-  }
-
   onLevelSelected(levelConfig: LevelConfig): void {
     setSelectedLevel(levelConfig.id);
-    this.showLevelSelector = false;
     this.router.navigate(['/game']);
   }
 

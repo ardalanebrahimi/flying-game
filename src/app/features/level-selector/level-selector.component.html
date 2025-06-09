@@ -1,40 +1,46 @@
 <div class="level-selector">
-  <div class="header">
-    <h1>Choose Your Mission</h1>
-    <p class="subtitle">
-      Select a level to begin your adventure. Complete missions to unlock new
-      challenges!
-    </p>
-  </div>
-
   <div class="levels-container">
-    <div class="levels-grid">
-      <div
-        *ngFor="let level of availableLevels"
-        class="level-card"
-        [class.locked]="!level.unlocked"
-        [class.selected]="selectedLevelId === level.config.id"
-        (click)="selectLevel(level.config)"
-      >
-        <div class="level-status">
-          <span *ngIf="!level.unlocked" class="badge locked">🔒 Locked</span>
-          <span
-            *ngIf="level.unlocked && selectedLevelId === level.config.id"
-            class="badge selected"
-            >✓ Selected</span
-          >
-        </div>
+    <div
+      class="level-carousel"
+      (touchstart)="onTouchStart($event)"
+      (touchmove)="onTouchMove($event)"
+      (touchend)="onTouchEnd($event)"
+      (mousedown)="onMouseDown($event)"
+      (mousemove)="onMouseMove($event)"
+      (mouseup)="onMouseUp($event)"
+      (mouseleave)="onMouseUp($event)"
+    >
+      <div class="levels-wrapper">
         <div
-          class="level-preview"
-          [style.background]="level.config.backgroundColor"
+          class="level-card"
+          *ngFor="let level of availableLevels; let i = index"
+          [class.active]="i === currentIndex"
+          [class.locked]="!level.unlocked"
         >
-          <span class="level-number">{{ level.config.id }}</span>
-          <div class="preview-overlay"></div>
-        </div>
+          <div class="level-status">
+            <span *ngIf="!level.unlocked" class="badge locked">🔒 Locked</span>
+          </div>
 
-        <div class="level-info">
-          <div class="level-header">
+          <div
+            class="level-preview"
+            [style.background]="level.config.backgroundColor"
+          >
+            <span class="level-number">{{ level.config.id }}</span>
+            <div class="preview-overlay"></div>
+          </div>
+
+          <div class="level-info">
             <h3>{{ level.config.name }}</h3>
+            <p class="level-theme">
+              <span class="theme-icon">🚀</span>
+              {{ level.config.theme | titlecase }} Adventure
+            </p>
+            <div class="level-goal">
+              <span class="goal-icon">🎯</span>
+              <span class="goal-text"
+                >Reach {{ level.config.goalHeight | number }}m</span
+              >
+            </div>
             <div class="difficulty-indicator">
               <span class="difficulty-stars">
                 <span
@@ -47,51 +53,15 @@
               </span>
             </div>
           </div>
-
-          <p class="level-theme">
-            <span class="theme-icon">🚀</span>
-            {{ level.config.theme | titlecase }} Adventure
-          </p>
-
-          <div class="level-goal">
-            <span class="goal-icon">🎯</span>
-            <span class="goal-text"
-              >Reach {{ level.config.goalHeight | number }}m</span
-            >
-          </div>
-
-          <div class="level-stats">
-            <div class="stat">
-              <div class="stat-icon">🏁</div>
-              <span class="value">{{ level.config.stages.length }}</span>
-              <span class="label">Stages</span>
-            </div>
-            <div class="stat">
-              <div class="stat-icon">🚢</div>
-              <span class="value">{{
-                level.config.availableSkins.length
-              }}</span>
-              <span class="label">Ships</span>
-            </div>
-          </div>
         </div>
       </div>
     </div>
 
-    <div class="action-section" *ngIf="selectedLevel">
-      <div class="selected-level-info">
-        <h3>{{ selectedLevel.name }}</h3>
-        <p class="description">
-          Embark on a {{ selectedLevel.theme }} themed adventure through
-          {{ selectedLevel.stages.length }} unique environments. Reach
-          {{ selectedLevel.goalHeight | number }}m to complete this mission!
-        </p>
-      </div>
-
+    <div class="action-section">
       <button
         class="start-button"
         (click)="startLevel()"
-        [disabled]="!selectedLevel"
+        [disabled]="!currentLevel.unlocked"
       >
         <span>Launch Mission</span>
         <i class="icon">🚀</i>

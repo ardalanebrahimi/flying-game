@@ -1,8 +1,19 @@
 <div class="start-page">
-  <div class="hero-section">
-    <img src="skins/rocket.png" alt="Game Logo" class="game-logo" />
-    <h1 class="title">Rocket Adventure</h1>
-    <p class="subtitle">Embark on an epic journey through space and beyond</p>
+  <!-- Action Icons - positioned at top corners -->
+  <div class="action-icons" *ngIf="!showNamePrompt">
+    <button (click)="chooseSkin()" class="icon-button" title="Customize Ship">
+      <i class="icon">🎨</i>
+    </button>
+    <button
+      (click)="viewLeaderboard()"
+      class="icon-button"
+      title="Hall of Fame"
+    >
+      <i class="icon">🏆</i>
+    </button>
+    <button (click)="editProfile()" class="icon-button" title="Settings">
+      <i class="icon">⚙️</i>
+    </button>
   </div>
 
   <div *ngIf="showNamePrompt" class="name-prompt">
@@ -24,30 +35,7 @@
     </div>
   </div>
 
-  <div *ngIf="!showNamePrompt && !showLevelSelector" class="main-menu">
-    <button (click)="showLevelSelection()" class="menu-button primary">
-      <i class="icon">🚀</i>
-      <span>Start Mission</span>
-    </button>
-    <button (click)="chooseSkin()" class="menu-button">
-      <i class="icon">🎨</i>
-      <span>Customize Ship</span>
-    </button>
-    <button (click)="viewLeaderboard()" class="menu-button">
-      <i class="icon">🏆</i>
-      <span>Hall of Fame</span>
-    </button>
-    <button (click)="editProfile()" class="menu-button">
-      <i class="icon">⚙️</i>
-      <span>Settings</span>
-    </button>
-  </div>
-
-  <div *ngIf="showLevelSelector" class="level-selection">
-    <button (click)="showLevelSelector = false" class="back-button">
-      <i class="back-icon">←</i>
-      <span>Back to Menu</span>
-    </button>
+  <div *ngIf="!showNamePrompt" class="level-selection-container">
     <app-level-selector
       (levelSelected)="onLevelSelected($event)"
     ></app-level-selector>

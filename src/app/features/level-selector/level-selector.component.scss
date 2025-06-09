@@ -1,40 +1,59 @@
 .level-selector {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
   padding: 2rem;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 3rem;
-
-  h1 {
-    font-size: clamp(2rem, 4vw, 3rem);
-    color: white;
-    margin-bottom: 1rem;
-    font-weight: 700;
-  }
-
-  .subtitle {
-    color: rgba(255, 255, 255, 0.8);
-    font-size: 1.1rem;
-    max-width: 600px;
-    margin: 0 auto;
-  }
 }
 
 .levels-container {
-  max-width: 1000px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-.levels-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-  margin-bottom: 3rem;
+.level-carousel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 2rem;
+  position: relative;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &::before {
+    content: "← Swipe to navigate →";
+    position: absolute;
+    bottom: -2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-align: center;
+    pointer-events: none;
+    z-index: 5;
+  }
+}
+
+.levels-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  min-height: 450px;
+  overflow: hidden;
+  touch-action: pan-y; /* Allow vertical scrolling but handle horizontal ourselves */
 }
 
 .level-card {
@@ -52,9 +71,22 @@
   position: relative;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-  min-height: 320px;
+  width: 350px;
+  min-height: 400px;
   display: flex;
   flex-direction: column;
+  opacity: 0;
+  transform: scale(0.8);
+
+  &.active {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  // Add pagination dots indicator
+  &:not(.active) {
+    display: none;
+  }
 
   &::before {
     content: "";
@@ -75,16 +107,16 @@
   }
 
   &:hover:not(.locked) {
-    transform: translateY(-12px) scale(1.03);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
-    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+    border-color: rgba(255, 255, 255, 0.3);
 
     &::before {
       opacity: 1;
     }
 
     .level-preview {
-      transform: scale(1.05);
+      transform: scale(1.03);
 
       &::after {
         opacity: 0.8;
@@ -92,40 +124,13 @@
     }
   }
 
-  &.selected {
-    border-color: #00ff88;
-    box-shadow: 0 20px 60px rgba(0, 255, 136, 0.4);
-    background: linear-gradient(
-      145deg,
-      rgba(0, 255, 136, 0.2),
-      rgba(0, 255, 136, 0.08)
-    );
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(
-        45deg,
-        transparent 30%,
-        rgba(0, 255, 136, 0.15) 50%,
-        transparent 70%
-      );
-      animation: selectedGlow 2s ease-in-out infinite;
-      z-index: 1;
-    }
-  }
-
   &.locked {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
     filter: grayscale(0.7);
 
     &:hover {
-      transform: none;
+      transform: scale(1);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
     }
 
@@ -451,47 +456,25 @@
 }
 
 .action-section {
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.15),
-    rgba(255, 255, 255, 0.05)
-  );
-  border-radius: 24px;
-  padding: 2rem;
-  backdrop-filter: blur(30px);
-  border: 2px solid rgba(255, 255, 255, 0.15);
-  text-align: center;
-  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
-
-  .selected-level-info {
-    margin-bottom: 2rem;
-
-    h3 {
-      color: #00ff88;
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #00ff88, #00cc6a);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .description {
-      color: rgba(255, 255, 255, 0.85);
-      line-height: 1.7;
-      max-width: 600px;
-      margin: 0 auto;
-      font-size: 1rem;
-      font-weight: 400;
-    }
-  }
+  // background: linear-gradient(
+  //   145deg,
+  //   rgba(255, 255, 255, 0.15),
+  //   rgba(255, 255, 255, 0.05)
+  // );
+  // border-radius: 24px;
+  // padding: 1.5rem 2rem;
+  // backdrop-filter: blur(30px);
+  // border: 2px solid rgba(255, 255, 255, 0.15);
+  // text-align: center;
+  // box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+  // width: 100%;
+  // max-width: 400px;
 
   .start-button {
     background: linear-gradient(135deg, #00ff88 0%, #00cc6a 100%);
     color: white;
     border: none;
-    padding: 1rem 3rem;
+    padding: 1rem 2.5rem;
     border-radius: 30px;
     font-size: 1.1rem;
     font-weight: 700;
@@ -503,6 +486,8 @@
     gap: 0.8rem;
     position: relative;
     overflow: hidden;
+    width: 100%;
+    justify-content: center;
 
     &::before {
       content: "";
@@ -519,9 +504,8 @@
       );
       transition: left 0.5s;
     }
-
     &:hover:not(:disabled) {
-      transform: translateY(-3px) scale(1.05);
+      transform: translateY(-3px) scale(1.02);
       box-shadow: 0 20px 50px rgba(0, 255, 136, 0.5);
 
       &::before {
@@ -530,7 +514,7 @@
     }
 
     &:active:not(:disabled) {
-      transform: translateY(-1px) scale(1.02);
+      transform: translateY(-1px) scale(1);
     }
 
     &:disabled {
@@ -546,137 +530,86 @@
   }
 }
 
+.level-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+
+  .indicator {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    cursor: pointer;
+
+    &.active {
+      background: rgba(255, 255, 255, 0.9);
+      transform: scale(1.2);
+    }
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.6);
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .level-selector {
     padding: 1rem;
   }
 
-  .header {
-    margin-bottom: 2rem;
-
-    h1 {
-      font-size: 1.8rem;
-    }
-
-    .subtitle {
-      font-size: 1rem;
-    }
-  }
-
-  .levels-grid {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
-  }
-
-  .level-card {
-    min-height: 280px;
-
-    &:hover:not(.locked) {
-      transform: translateY(-6px) scale(1.02);
-    }
-  }
-
-  .level-preview {
-    height: 120px;
-    margin: 3rem 1rem 0 1rem;
-
-    .level-number {
-      font-size: 2.5rem;
-    }
-  }
-  .level-info {
-    padding: 1rem 1.2rem 1.2rem;
-
-    .level-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.5rem;
-
-      h3 {
-        font-size: 1.2rem;
-      }
-    }
-
-    .difficulty-indicator {
-      align-items: flex-start;
-
-      .difficulty-stars .star {
-        font-size: 0.65rem;
-      }
-    }
-
-    .level-theme {
-      font-size: 0.85rem;
-
-      .theme-icon {
-        font-size: 1rem;
-      }
-    }
-
-    .level-goal {
-      font-size: 0.9rem;
-
-      .goal-icon {
-        font-size: 1rem;
-      }
-    }
-
-    .level-stats {
-      gap: 0.8rem;
-
-      .stat {
-        padding: 0.6rem 0.4rem;
-
-        .stat-icon {
-          font-size: 1rem;
-          margin-bottom: 0.2rem;
-        }
-
-        .value {
-          font-size: 1.1rem;
-        }
-
-        .label {
-          font-size: 0.65rem;
-        }
-      }
-    }
-  }
-
-  .level-status {
-    top: 0.8rem;
-    right: 0.8rem;
-
-    .badge {
-      padding: 0.4rem 0.8rem;
+  .level-carousel {
+    &::before {
+      bottom: -3rem;
       font-size: 0.7rem;
     }
   }
 
-  .action-section {
-    padding: 1.5rem;
+  .levels-wrapper {
+    width: 300px;
+    min-height: 380px;
+  }
 
-    .selected-level-info {
-      margin-bottom: 1.5rem;
+  .level-card {
+    width: 280px;
+    min-height: 350px;
 
-      h3 {
-        font-size: 1.5rem;
-      }
+    &:hover:not(.locked) {
+      transform: translateY(-4px) scale(1.01);
+    }
+  }
 
-      .description {
-        font-size: 0.95rem;
-      }
+  .level-preview {
+    height: 100px;
+    margin: 1rem;
+
+    .level-number {
+      font-size: 2rem;
+    }
+  }
+
+  .level-info {
+    padding: 1rem;
+
+    h3 {
+      font-size: 1.1rem;
     }
 
-    .start-button {
-      padding: 0.9rem 2.5rem;
-      font-size: 1rem;
-      width: 100%;
-      max-width: 300px;
+    .level-theme,
+    .level-goal {
+      font-size: 0.85rem;
+    }
+  }
 
-      .icon {
-        font-size: 1.1rem;
-      }
+  .action-section {
+    padding: 1rem;
+    max-width: 280px;
+
+    .start-button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
     }
   }
 }

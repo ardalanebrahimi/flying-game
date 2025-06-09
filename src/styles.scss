@@ -57,7 +57,6 @@ body {
   .level-selector,
   .level-selection {
     overflow-y: scroll !important;
-    height: 100vh !important;
     position: relative !important;
     /* Additional mobile improvements */
     will-change: scroll-position;
