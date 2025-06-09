@@ -164,6 +164,7 @@ export class LevelSelectorComponent {
       } else {
         // Drag right - go to previous level
         this.previousLevel();
-      }    }
+      }
+    }
   }
 }
