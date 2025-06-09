@@ -124,6 +124,94 @@
     position: relative;
     letter-spacing: -2px;
   }
+  .obstacles-preview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 2;
+    overflow: hidden;
+  }
+  .obstacles-scrolling-track {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 40px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+
+    /* Force animation restart when level changes */
+    &[data-level] .obstacle-icon {
+      animation: none;
+      animation: scrollRightToLeft 6s linear infinite;
+    }
+  }
+
+  .obstacle-icon {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    opacity: 0.8;
+    animation: scrollRightToLeft 6s linear infinite;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+    transition: all 0.3s ease;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: 4px;
+    }
+    &:nth-child(1) {
+      animation-delay: 0s;
+      top: -10px;
+    }
+
+    &:nth-child(2) {
+      animation-delay: 0.8s;
+      top: 10px;
+    }
+
+    &:nth-child(3) {
+      animation-delay: 1.6s;
+      top: -5px;
+    }
+
+    &:nth-child(4) {
+      animation-delay: 2.4s;
+      top: 5px;
+    }
+
+    &:nth-child(5) {
+      animation-delay: 3.2s;
+      top: -8px;
+    }
+
+    &:nth-child(6) {
+      animation-delay: 4s;
+      top: 8px;
+    }
+
+    &:nth-child(7) {
+      animation-delay: 4.8s;
+      top: -3px;
+    }
+
+    &:nth-child(8) {
+      animation-delay: 5.6s;
+      top: 3px;
+    }
+
+    &:hover {
+      animation-play-state: paused;
+      opacity: 1;
+      transform: scale(1.2);
+    }
+  }
+
   &::before {
     content: "";
     position: absolute;
@@ -135,6 +223,32 @@
     );
     opacity: 0.6;
     z-index: 1;
+  }
+
+  .preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.3));
+    z-index: 1;
+  }
+}
+
+@keyframes scrollRightToLeft {
+  0% {
+    left: 100%;
+    opacity: 0;
+    transform: rotate(0deg);
+  }
+  10% {
+    opacity: 0.8;
+  }
+  90% {
+    opacity: 0.8;
+  }
+  100% {
+    left: -60px;
+    opacity: 0;
+    transform: rotate(360deg);
   }
 }
 
@@ -259,6 +373,14 @@
   .level-preview {
     height: 100px;
     margin: 1rem;
+    .obstacle-icon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .obstacles-scrolling-track {
+      height: 30px;
+    }
   }
   .level-info {
     padding: 1rem;

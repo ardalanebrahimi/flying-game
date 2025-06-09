@@ -24,8 +24,8 @@ export class LevelSelectorComponent {
       unlocked: getUnlockedLevels().includes(LEVEL_2_CONFIG.id),
     },
   ];
-
   currentIndex: number = 0;
+  private animationResetKey: number = 0; // Key to force animation reset
 
   // Touch/swipe functionality
   private startX: number = 0;
@@ -36,17 +36,35 @@ export class LevelSelectorComponent {
   get currentLevel() {
     return this.availableLevels[this.currentIndex];
   }
-
   previousLevel(): void {
     if (this.currentIndex > 0) {
       this.currentIndex--;
+      this.resetAnimations();
     }
   }
 
   nextLevel(): void {
     if (this.currentIndex < this.availableLevels.length - 1) {
       this.currentIndex++;
+      this.resetAnimations();
     }
+  }
+
+  // Allow direct level selection via indicators
+  goToLevel(index: number): void {
+    if (index >= 0 && index < this.availableLevels.length) {
+      this.currentIndex = index;
+      this.resetAnimations();
+    }
+  }
+
+  private resetAnimations(): void {
+    // Increment the key to force Angular to recreate the obstacle elements
+    this.animationResetKey++;
+  }
+
+  getAnimationKey(): number {
+    return this.animationResetKey;
   }
 
   startLevel(): void {
@@ -56,7 +74,6 @@ export class LevelSelectorComponent {
       this.levelSelected.emit(currentLevel.config);
     }
   }
-
   getDifficultyLevel(levelId: number): number {
     // Returns a difficulty rating from 1-5 stars based on level
     switch (levelId) {
@@ -67,6 +84,30 @@ export class LevelSelectorComponent {
       default:
         return 3; // Medium
     }
+  }
+
+  getPreviewObstacles(levelConfig: LevelConfig): string[] {
+    // Get a selection of unique obstacle images for the preview
+    const obstacleImages: string[] = [];
+    const maxObstacles = 8; // Show up to 8 different obstacles
+
+    // Collect all obstacle images from all stages (deterministic order)
+    Object.values(levelConfig.obstacles).forEach((stageConfig) => {
+      stageConfig.types.forEach((obstacleType) => {
+        obstacleType.imagePool.forEach((imagePath) => {
+          if (!obstacleImages.includes(imagePath)) {
+            obstacleImages.push(imagePath);
+          }
+        });
+      });
+    }); // Return a subset for preview, ensure we have at least some obstacles to show
+    return obstacleImages.slice(
+      0,
+      Math.min(maxObstacles, obstacleImages.length)
+    );
+  }
+  trackByObstacle(index: number, obstacle: string): string {
+    return `${obstacle}-${index}-${this.animationResetKey}`;
   }
 
   // Touch event handlers
@@ -123,14 +164,6 @@ export class LevelSelectorComponent {
       } else {
         // Drag right - go to previous level
         this.previousLevel();
-      }
-    }
-  }
-
-  // Allow direct level selection via indicators
-  goToLevel(index: number): void {
-    if (index >= 0 && index < this.availableLevels.length) {
-      this.currentIndex = index;
-    }
+      }    }
   }
 }

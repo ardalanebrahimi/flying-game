@@ -20,12 +20,29 @@
           <div class="level-status">
             <span *ngIf="!level.unlocked" class="badge locked">🔒 Locked</span>
           </div>
-
           <div
             class="level-preview"
             [style.background]="level.config.backgroundColor"
           >
             <span class="level-number">{{ level.config.id }}</span>
+            <div class="obstacles-preview">
+              <div
+                class="obstacles-scrolling-track"
+                [attr.data-level]="level.config.id"
+              >
+                <div
+                  class="obstacle-icon"
+                  *ngFor="
+                    let obstacle of getPreviewObstacles(level.config);
+                    let i = index;
+                    trackBy: trackByObstacle
+                  "
+                  [style.animation-delay]="i * 0.8 + 's'"
+                >
+                  <img [src]="obstacle" [alt]="'Obstacle ' + (i + 1)" />
+                </div>
+              </div>
+            </div>
             <div class="preview-overlay"></div>
           </div>
 
