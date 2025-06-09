@@ -9,26 +9,6 @@
   animation: gradientShift 8s ease infinite;
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: radial-gradient(
-        circle at 20% 80%,
-        rgba(120, 119, 198, 0.3) 0%,
-        transparent 50%
-      ),
-      radial-gradient(
-        circle at 80% 20%,
-        rgba(255, 119, 198, 0.3) 0%,
-        transparent 50%
-      );
-    pointer-events: none;
-  }
 }
 
 @keyframes gradientShift {
@@ -53,17 +33,6 @@
   height: 120px;
   margin-bottom: 1.5rem;
   filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
-  animation: float 3s ease-in-out infinite;
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
 }
 
 .title {
@@ -107,31 +76,10 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.2),
-      transparent
-    );
-    transition: left 0.5s;
-  }
-
   &:hover {
     transform: translateY(-2px);
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
     background: rgba(255, 255, 255, 0.25);
-
-    &::before {
-      left: 100%;
-    }
   }
 
   &:active {
