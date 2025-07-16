@@ -2,6 +2,7 @@ import { Service, Inject } from 'typedi';
 import { Repository } from 'typeorm';
 import { NotFoundError } from 'routing-controllers';
 import { UserProfile } from '../models/user-profile';
+import { randomUUID } from 'crypto';
 
 @Service()
 export class UserService {
@@ -19,7 +20,7 @@ export class UserService {
   }
 
   async create(profile: UserProfile): Promise<string> {
-    const uuid = crypto.randomUUID();
+    const uuid = randomUUID();
     const newProfile = this.repository.create({
       ...profile,
       uuid,
